@@ -3,164 +3,192 @@
 /*                                                        :::      ::::::::   */
 /*   split.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: bguthy <bguthy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/14 16:39:41 by rici              #+#    #+#             */
-/*   Updated: 2026/05/14 17:37:24 by rici             ###   ########.fr       */
+/*   Created: 2026/05/21 14:02:51 by bguthy            #+#    #+#             */
+/*   Updated: 2026/05/21 17:32:35 by bguthy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minishell.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-
-int ft_strlen(char *s)
+int skip_to_next_quote(const char *read_line, char quote_type)
 {
     int i;
 
     i = 0;
-    if (!s)
-        return (0);
-    while (s[i])
-        i++;
-    return (i);
-}
-
-int quote_check(char *text, int *i, char c)
-{
-    int index;
-
-    index = *i;
-    while (text[index])
+    while (*read_line++)
     {
-        if (text[index] == c)
-        {
-            *i = index;
-            return (0);
-        }
-        index++;
+        i++;
+        if (*read_line == quote_type)
+            break ;
     }
-    return (1);
+    i += skip_non_white_spaces(read_line + i);
+    return (i + 1);
 }
 
-int is_whitespace(char c)
+int is_white_space(const char letter)
 {
-    if ((c < 14 && c > 8) || c == 32)
+    if ((letter <= CARRIAGE_RET && letter >= HORIZONTAL_TAB) || letter == SPACE)
         return (1);
     return (0);
 }
 
-int word_counter(char *s)
+int skip_white_spaces(const char *read_line)
 {
     int i;
-    int words;
 
     i = 0;
+    while (is_white_space(*read_line++))
+        i++;
+    return (i);
+}
+
+int check_for_quote(const char letter, int *quote_type)
+{
+    if (letter == SINGLE_QUOTE)
+        return (*quote_type = SINGLE_QUOTE, 1);
+    else if (letter == DOUBLE_QUOTE)
+        return (*quote_type = DOUBLE_QUOTE, 1);
+    else
+        return (0);
+}
+
+int is_word(const char *read_line, int *words)
+{
+    int i;
+
+    i = 0;
+    while (!is_white_space(*read_line) && *read_line++)
+        i++;
+    if (i != 0)
+        (*words)++;
+    return (i);
+}
+
+int word_counter(const char *read_line)
+{
+    int words;
+    int quote_type;
+
+    quote_type = 0;
     words = 0;
-    while (s[i])
+    while (*read_line)
     {
-        while (s[i] && is_whitespace(s[i]))
-            i++;
-        if (s[i] && !is_whitespace(s[i]))
-            words++;
-        while (s[i] && !is_whitespace(s[i]))
+        read_line += skip_white_spaces(read_line);
+        if(check_for_quote(*read_line, &quote_type))
         {
-            if (s[i] == '\'' || s[i] == '\"')
-            {
-                if (quote_check(s, &i + 1, s[i]))
-                    return (-1);
-            }
-            i++;
+            words++;
+            read_line += skip_to_next_quote(read_line + 1, quote_type);
         }
+        read_line += is_word(read_line, &words);
     }
     return (words);
 }
 
-int letter_counter(char *word, int *i)
+int     skip_non_white_spaces(const char *read_line)
 {
-    int start;
+    int skips;
 
-    start = *i;
-    while (is_whitespace(word[*i]))
-        (*i)++;
-    while (!is_whitespace(word[*i]))
+    skips = 0;
+    while (!is_white_space(*read_line) && *read_line)
     {
-        if (word[*i] == '\'' || word[*i] == '\"')
-            quote_check(word, i + 1, word[*i]);
-        (*i)++;
+        read_line++;
+        skips++;
     }
-    return (*i - start);
+    return (skips);
 }
 
-char    *quote_fill(char *line, int *i, char c, int len)
+int     count_letters(const char *read_line, int i)
 {
-    char *new_word;
-    int l;
+    int start;
+    int quote_type;
 
-    l = 0;
-    new_word = calloc(sizeof(char), (len + 1));
+    quote_type = 0;
+    start = i;
+    if (check_for_quote(read_line[i], &quote_type))
+    {
+        i += skip_to_next_quote(read_line + 1, quote_type);
+        return (i - start);
+    }
+    i += skip_non_white_spaces(read_line + i);
+    return (i - start);
+}
+
+char    **allocating_double_pointer(const char *read_line)
+{
+    int words;
+    char **split_line;
+
+    words = word_counter(read_line);
+    split_line = malloc(sizeof(char *) * (words + 1));   
+    return (split_line);
+}
+
+char    *copy_n_chars(int start, int end, const char *read_line)
+{
+    int     i;
+    char    *new_word;
+
+    i = 0;
+    new_word = malloc(sizeof(char) * (end - start + 1));
     if (!new_word)
         return (NULL);
-    while (line[*i] != c)
-    {
-        new_word[l] = line[*i];
-        (*i)++;
-        l++;
-    }
+    while (start < end)
+        new_word[i++] = read_line[start++];
+    new_word[i] = 0;
     return (new_word);
 }
 
-char    **fulfill(char *line, char **full_string, int *lens)
+void    fill_up_double_pointer(char **split_line, const char *read_line)
 {
-    int *i;
+    int start_of_word;
     int w;
-    int l;
+    int end_of_word;
+    int quote_type;
 
-    i = 0;
+    quote_type = 0;
     w = 0;
-    l = 0;
-    while (line[*i])
+    start_of_word = 0;
+    end_of_word = 0;
+    while (read_line[start_of_word])
     {
-        while (is_whitespace(line[*i]) && line[*i])
-            i++;
-        while (!is_whitespace(line[*i]) && line[*i])
+        start_of_word += skip_white_spaces(read_line + start_of_word);
+        if (check_for_quote(read_line[start_of_word], &quote_type))
         {
-            if (line[*i] == '\'' || line[*i] == '\"')
-                full_string[w] = quote_fill(line, &i, w, lens[w]);
+            end_of_word = start_of_word + skip_to_next_quote(read_line + start_of_word, quote_type);
+            split_line[w++] = copy_n_chars(start_of_word, end_of_word, read_line);
+            start_of_word = end_of_word;
         }
+        start_of_word += skip_white_spaces(read_line + start_of_word);
+        end_of_word = start_of_word + count_letters(read_line, start_of_word);
+        split_line[w++] = copy_n_chars(start_of_word, end_of_word, read_line);
+        start_of_word = end_of_word;
     }
+    split_line[w] = NULL;
 }
 
-char    **split(char *line)
+char    **split(const char *read_line)
 {
-    char **final_string;
-    int words;
+    char    **split_line;
+
+    split_line = allocating_double_pointer(read_line);
+    fill_up_double_pointer(split_line, read_line);
+    return (split_line);
+}
+
+int main()
+{
+    char **okcso;
     int i;
-    int index;
-    int *lengths;
-    int letters;
 
     i = 0;
-    index = 0;
-    words = word_counter(line);
-    lengths = malloc(sizeof(int) * words);
-    final_string = malloc(sizeof(char) * (word_counter(line) + 1));
-    while (i < words)
+    okcso = split("okcso ''fasz''van geci lada      \0");
+    while (okcso[i])
     {
-        letters = letter_counter(line, &index) + 1;
-        final_string[i] = calloc(sizeof(char), letters);
-        lengths[i] = letters;
-        i++;
+        printf("%s\n", okcso[i]);
+        free(okcso[i++]);
     }
-}
-
-int main(int args, char **argv)
-{
-    int words;
-
-    words = word_counter(argv[1]);
-    printf("%i\n", words);
+    free(okcso);
     return (0);
 }
