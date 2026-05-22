@@ -3,6 +3,7 @@ NAME = minishell
 SOURCE =	split.c \
 			minishell.c \
 			split_helpers.c \
+			rest_helpers.c \
 			stepping_in_input.c \
 			env_assign_helpers.c \
 			syntax_error_check.c 

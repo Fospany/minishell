@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/22 10:24:59 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/05/22 11:27:43 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ int count_valid_char(char *quoted_word)
         }
         else
             quote_type = determine_quote_type(quoted_word[i], quote_type);
-        if (quoted_word[i] != quote_type)
+        if (quoted_word[i] != quote_type && quoted_word[i])
             counter++;
         i++;
     }
@@ -135,19 +135,48 @@ char    *get_rid_of_quotes(char *word)
     
     i = 0;
     quote_type = 0;
+    local_index = 0;
     new_word = malloc(sizeof(char) * (count_valid_char(word) + 1));
     if (!new_word)
         return (NULL);
     while (word[i])
     {
         quote_type = get_real_quote_type(word[i], quote_type, &i);
-        if (word[i] != quote_type)
+        if (word[i] != quote_type && word[i])
+        {
             new_word[local_index++] = word[i++];
-        else
+        }
+        else if (word[i])
             i++;
     }
-    word[i] = 0;
-    return (word);
+    new_word[local_index] = 0;
+    free(word);
+    return (new_word);
+}
+
+void    remove_quoted_word(char **split_line, t_token *tokens)
+{
+    int i;
+    int j;
+    
+    i = 0;
+    j = 0;
+    while (split_line[i])
+    {
+        while (split_line[i][j])
+        {
+            if (check_for_quote_without_quote_type(split_line[i][j]))
+            {
+                split_line[i] = get_rid_of_quotes(split_line[i]);
+                tokens[i].value = split_line[i];
+                printf("split_line[i]: %s\n", split_line[i]);
+                break ;
+            }
+            j++;
+        }
+        i++;
+        j = 0;
+    }
 }
 
 int minishell(const char *read_line)
@@ -160,11 +189,15 @@ int minishell(const char *read_line)
     split_line = split(read_line);
     tokens = malloc(sizeof(t_token) * word_counter(read_line));
     create_structs(tokens, split_line);
+    remove_quoted_word(split_line, tokens);
     while (split_line[i])
     {
         printf("type: %i, value: %s\n", tokens[i].type, tokens[i].value);
+        free(split_line[i]);
         i++;
     }
+    free(tokens);
+    free(split_line);
     return (0);
 }
 

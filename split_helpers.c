@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 21:09:28 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/21 21:10:45 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/05/22 10:45:35 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,16 @@ int check_for_quote(const char letter, int *quote_type)
         return (*quote_type = SINGLE_QUOTE, 1);
     else if (letter == DOUBLE_QUOTE)
         return (*quote_type = DOUBLE_QUOTE, 1);
+    else
+        return (0);
+}
+
+int check_for_quote_without_quote_type(const char letter)
+{
+    if (letter == SINGLE_QUOTE)
+        return (1);
+    else if (letter == DOUBLE_QUOTE)
+        return (1);
     else
         return (0);
 }
