@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/22 11:25:53 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/05/26 16:39:27 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,10 @@
 # define SINGLE_QUOTE 39
 # define DOUBLE_QUOTE 34
 # define EQUAL_SIGN 61
+# define DOLLAR_SIGN 36
+# define REDIR_IN 60
+# define REDIR_OUT 62
+# define PIPE 124
 
 
 # include <stdio.h>
@@ -41,6 +45,12 @@ typedef enum e_token_type
     token_env_assign
 }   t_token_type;
 
+typedef struct s_envs
+{
+    char            *key;
+    char            *value;
+}                   t_envs;
+
 typedef struct s_token
 {
     int             id;
@@ -59,7 +69,7 @@ char	**split(const char *read_line);
 char	**allocating_double_pointer(const char *read_line);
 int		count_letters(const char *read_line, int i);
 int		word_counter(const char *read_line);
-int		is_word(const char *read_line, int *words);
+int		is_word(const char *read_line, int *i, int *words);
 int		check_for_quote(const char letter, int *quote_type);
 void    skip_white_spaces(const char *read_line, int *i);
 int		is_white_space(const char letter);
@@ -69,5 +79,16 @@ void    split_clean_up(char **split_line, int i);
 int     env_assign_check(char *string);
 void    remove_quoted_word(char **split_line, t_token *tokens);
 int     check_for_quote_without_quote_type(const char letter);
+int     get_real_quote_type(char *word, int quote_type, int *i);
+t_envs  *env_list_creation(t_token *tokens, char **envp);
+int     letter_after_dollar_is_valid(const char letter);
+int     is_valid_for_dollar_sign(const char letter);
+void    dollar_sign_exception(const char *read_line, int *i, int *words);
+int     valid_index_for_spec_char(const char letter, int num1, int num2);
+int     special_characters_exception(const char *read_line, int *i, int *words);
+int     is_heredoc_or_append(const char letter1, const char letter2);
+int     is_special_character(const char letter1, const char letter2);
+int     is_redir_or_pipe(const char letter);
+
 
 #endif

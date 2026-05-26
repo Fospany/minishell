@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_assign_helpers.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 17:00:28 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/22 09:51:31 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/05/26 11:39:06 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int first_letter_check(char letter)
 
 int other_letters_check(char c)
 {
-    if (first_letter_check(c) && is_not_number(c))
+    if (first_letter_check(c) || is_not_number(c) || c != EQUAL_SIGN)
         return (0);
     return (1);
 }

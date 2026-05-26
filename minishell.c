@@ -3,14 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/22 11:27:43 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/05/26 17:08:03 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "env_assign_helpers.c"
+#include "rest_helpers.c"
+#include "split_helpers.c"
+#include "split.c"
+#include "stepping_in_input.c"
+#include "syntax_error_check.c"
+#include <string.h>
+
 
 int tokenizer(char *input)
 {
@@ -42,6 +50,8 @@ void    create_structs(t_token *tokens, char **line)
         tokens[i].type = tokenizer(line[i]);
         i++;
     }
+    tokens[i].value = NULL;
+    tokens[i].type = -1;
 }
 
 int equal_sign_check(char *string)
@@ -65,7 +75,7 @@ int env_assign_check(char *string)
     i = 0;
     if (!equal_sign_check(string))
         return (0);
-    if (!first_letter_check(string[0]))
+    if (first_letter_check(string[0]))
         return (0);
     while (string[i])
     {
@@ -100,29 +110,32 @@ int count_valid_char(char *quoted_word)
     i = 0;
     while (quoted_word[i])
     {
-        if (quote_type != 0)
+        get_real_quote_type(quoted_word, quote_type, &i);
+        if (quoted_word[i] != quote_type)
         {
-            if ((quote_type = determine_quote_type(quoted_word[i], quote_type)) == 0)
-                i++;
-        }
-        else
-            quote_type = determine_quote_type(quoted_word[i], quote_type);
-        if (quoted_word[i] != quote_type && quoted_word[i])
             counter++;
-        i++;
+            i++;
+        }
     }
     return (counter);
 }
 
-int get_real_quote_type(char letter, int quote_type, int *i)
+int get_real_quote_type(char *word, int quote_type, int *i)
 {
+    while (check_for_quote(word[*i], &quote_type) && word[*i] == word[(*i) + 1])
+        (*i)++;
+    if (!check_for_quote(word[*i], &quote_type))
+        return (quote_type);
     if (quote_type != 0)
     {
-        if ((quote_type = determine_quote_type(letter, quote_type)) == 0)
+        if ((quote_type = determine_quote_type(word[*i], quote_type)) == 0)
             (*i)++;
     }
     else
-        quote_type = determine_quote_type(letter, quote_type);
+    {
+        quote_type = determine_quote_type(word[*i], quote_type);
+        (*i)++;
+    }
     return (quote_type);
 }
 
@@ -136,12 +149,12 @@ char    *get_rid_of_quotes(char *word)
     i = 0;
     quote_type = 0;
     local_index = 0;
-    new_word = malloc(sizeof(char) * (count_valid_char(word) + 1));
+    new_word = malloc(sizeof(char) * (count_valid_char(word)) + 1);
     if (!new_word)
         return (NULL);
     while (word[i])
     {
-        quote_type = get_real_quote_type(word[i], quote_type, &i);
+        quote_type = get_real_quote_type(word, quote_type, &i);
         if (word[i] != quote_type && word[i])
         {
             new_word[local_index++] = word[i++];
@@ -169,7 +182,6 @@ void    remove_quoted_word(char **split_line, t_token *tokens)
             {
                 split_line[i] = get_rid_of_quotes(split_line[i]);
                 tokens[i].value = split_line[i];
-                printf("split_line[i]: %s\n", split_line[i]);
                 break ;
             }
             j++;
@@ -179,15 +191,17 @@ void    remove_quoted_word(char **split_line, t_token *tokens)
     }
 }
 
-int minishell(const char *read_line)
+int minishell(const char *read_line, char **envp)
 {
-    int i;
+    int     i;
     t_token *tokens;
+    t_envs  *my_env_list;
     char    **split_line;
     
     i = 0;
     split_line = split(read_line);
-    tokens = malloc(sizeof(t_token) * word_counter(read_line));
+    printf("%i\n", word_counter(read_line));
+    tokens = malloc(sizeof(t_token) * (word_counter(read_line) + 1));
     create_structs(tokens, split_line);
     remove_quoted_word(split_line, tokens);
     while (split_line[i])
@@ -195,14 +209,15 @@ int minishell(const char *read_line)
         printf("type: %i, value: %s\n", tokens[i].type, tokens[i].value);
         free(split_line[i]);
         i++;
-    }
+    }    i = 0;
+    
     free(tokens);
     free(split_line);
     return (0);
 }
 
-int main(void)
+int main(int args, char **argv, char **envp)
 {
-    minishell("ls | cat >> 'hello' > okcso");
+    minishell("ls|ls| |cat", envp);
     return (0);
 }

@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   split.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 14:02:51 by bguthy            #+#    #+#             */
-/*   Updated: 2026/05/21 21:38:49 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/05/26 17:00:02 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 
 char    *copy_till_next_word(const char *read_line, int *i)
 {
@@ -24,7 +25,13 @@ char    *copy_till_next_word(const char *read_line, int *i)
     if (!new_word)
         return (NULL);
     while (!is_white_space(read_line[*i]) && read_line[*i])
+    {
         new_word[local_index++] = read_line[(*i)++];
+        if (is_heredoc_or_append(read_line[*i], read_line[(*i) + 1]) && local_index > 0)
+            break ;
+        else if ((is_redir_or_pipe(read_line[*i]) && local_index > 0 && !is_redir_or_pipe(new_word[local_index - 1])) || (is_redir_or_pipe(new_word[local_index - 1])))
+            break ;
+    }
     new_word[local_index] = 0;
     return (new_word);
 }
