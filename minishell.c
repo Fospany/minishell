@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/26 17:08:03 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/05/26 22:51:40 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,10 +207,11 @@ int minishell(const char *read_line, char **envp)
     while (split_line[i])
     {
         printf("type: %i, value: %s\n", tokens[i].type, tokens[i].value);
-        free(split_line[i]);
+        //free(split_line[i]);
         i++;
     }    i = 0;
-    
+    if (syntax_check(tokens))
+        return (1);
     free(tokens);
     free(split_line);
     return (0);
@@ -218,6 +219,7 @@ int minishell(const char *read_line, char **envp)
 
 int main(int args, char **argv, char **envp)
 {
-    minishell("ls|ls| |cat", envp);
+    if (minishell("$cat", envp))
+        return (1);
     return (0);
 }

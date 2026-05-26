@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 21:09:28 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/26 16:22:54 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/05/26 22:55:53 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,26 +51,24 @@ void    dollar_sign_exception(const char *read_line, int *i, int *words)
     int quote_type;
     
     quote_type = 0;
-    if (read_line[*i] == DOLLAR_SIGN)
+    while (read_line[*i])
     {
-        if (letter_after_dollar_is_valid(read_line[++(*i)]))
-        while (read_line[*i])
+        if (!letter_after_dollar_is_valid(read_line[++(*i)]))
+            return ;
+        if(check_for_quote(read_line[*i], &quote_type))
         {
-            if(check_for_quote(read_line[*i], &quote_type))
-            {
-                skip_to_next_quote(read_line, i, quote_type);
-                words++;
-                return ;
-            }
-            if (!is_valid_for_dollar_sign(read_line[*i]))
-            {
-                (*words)++;
-                (*i)++;
-                return ;
-            }
-            else
-                (*i)++;
+            skip_to_next_quote(read_line, i, quote_type);
+            words++;
+            return ;
         }
+        if (!is_valid_for_dollar_sign(read_line[*i]))
+        {
+            (*words)++;
+            (*i)++;
+            return ;
+        }
+        else
+            (*i)++;
     }
 }
 
@@ -86,11 +84,7 @@ int word_counter(const char *read_line)
     while (read_line[i])
     {
         skip_white_spaces(read_line, &i);
-        if(check_for_quote(read_line[i], &quote_type))
-        {
-            skip_to_next_quote(read_line, &i, quote_type);
-            words++;
-        }
+        quote_in_word(read_line, &i, &words);
         if (is_word(read_line, &i, &words))
             words++;
     }
@@ -108,6 +102,7 @@ int     is_special_character(const char letter1, const char letter2)
         return (1);
     return (0);
 }
+
 
 int     count_letters(const char *read_line, int i)
 {

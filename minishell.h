@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/26 16:39:27 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/05/26 21:16:00 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,8 @@ int     special_characters_exception(const char *read_line, int *i, int *words);
 int     is_heredoc_or_append(const char letter1, const char letter2);
 int     is_special_character(const char letter1, const char letter2);
 int     is_redir_or_pipe(const char letter);
+int     quote_in_word(const char *read_line, int *i, int *words);
+int     syntax_error_message_display(char *token_value);
 
 
 #endif

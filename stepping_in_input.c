@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 20:34:44 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/26 17:07:12 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/05/26 22:29:00 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,11 @@ void skip_to_next_quote(const char *read_line, int *i, char quote_type)
 void     skip_non_white_spaces(const char *read_line, int *i)
 {
     while (!is_white_space(read_line[*i]) && read_line[*i])
+    {
+        if (is_special_character(read_line[*i], read_line[(*i) + 1]))
+            break ;
         (*i)++;
+    }
 }
 
 int     is_redir_or_pipe(const char letter)
@@ -88,6 +92,20 @@ int valid_index_for_spec_char(const char letter, int num1, int num2)
         return (1);
 }
 
+int quote_in_word(const char *read_line, int *i, int *words)
+{
+    int quote_type;
+    
+    quote_type = 0;
+    if (check_for_quote(read_line[*i], &quote_type))
+    {
+        skip_to_next_quote(read_line, i, quote_type);
+        (*words)++;
+        return (1);
+    }
+    return (0);
+}
+
 int is_word(const char *read_line, int *i, int *words)
 {
     int start;
@@ -97,6 +115,8 @@ int is_word(const char *read_line, int *i, int *words)
     flag = 0;
     while (!is_white_space(read_line[*i]) && read_line[*i])
     {
+        if (quote_in_word(read_line, i, words))
+            return (0);
         if (valid_index_for_spec_char(read_line[(*i) + 1], *i, start) && special_characters_exception(read_line, i, words))
         {
             flag = 1;
