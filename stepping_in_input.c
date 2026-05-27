@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 20:34:44 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/26 22:29:00 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/05/27 09:33:16 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,95 @@ int quote_in_word(const char *read_line, int *i, int *words)
     }
     return (0);
 }
+
+int check_for_pipe(const char *read_line, int *i)
+{
+    if (*i == 0 && is_white_space(read_line[1]))
+        return ((*i)++, 1);
+    else if (read_line[(*i) + 1] == '\0' && *i != 0 && is_white_space(read_line[(*i) - 1]))
+        return ((*i)++, 1);
+    else if (*i != 0 && is_white_space(read_line[(*i) - 1]) && is_white_space(read_line[(*i) + 1]))
+        return ((*i)++, 1);
+    else
+        return (0);
+}
+
+int check_for_redirect_in_and_heredoc(const char *read_line, int *i)
+{
+    if (i == 0 && is_white_space(read_line[1]))
+        return ((*i)++, 1);
+    else if (i == 0 && read_line[1] == REDIR_IN && is_white_space(read_line[2]))
+        return ((*i) += 2, 1);
+    else if (i != 0 && is_white_space(read_line[(*i) - 1]) && is_white_space(read_line[(*i) + 1]))
+        return ((*i)++, 1);
+    else if (i != 0 && is_white_space(read_line[(*i) - 1]) && read_line[(*i) + 1] == REDIR_IN && is_white_space(read_line[(*i) + 2]))
+        return ((*i) += 2, 1);
+    else if (read_line[(*i) + 1] == '\0' && is_white_space(read_line[(*i) - 1]))
+        return ((*i)++, 1);
+    else if (read_line[(*i) + 2] == '\0' && read_line[(*i) + 1] == REDIR_IN && is_white_space(read_line[(*i) - 1]))
+        return ((*i) += 2, 1);
+    return (0);
+}
+
+int check_for_redirect_out_and_append(const char *read_line, int *i)
+{
+    if (i == 0 && is_white_space(read_line[1]))
+        return ((*i)++, 1);
+    else if (i == 0 && read_line[1] == REDIR_OUT && is_white_space(read_line[2]))
+        return ((*i) += 2, 1);
+    else if (i != 0 && is_white_space(read_line[(*i) - 1]) && is_white_space(read_line[(*i) + 1]))
+        return ((*i)++, 1);
+    else if (i != 0 && is_white_space(read_line[(*i) - 1]) && read_line[(*i) + 1] == REDIR_OUT && is_white_space(read_line[(*i) + 2]))
+        return ((*i) += 2, 1);
+    else if (read_line[(*i) + 1] == '\0' && is_white_space(read_line[(*i) - 1]))
+        return ((*i)++, 1);
+    else if (read_line[(*i) + 2] == '\0' && read_line[(*i) + 1] == REDIR_OUT && is_white_space(read_line[(*i) - 1]))
+        return ((*i) += 2, 1);
+    return (0);
+}
+
+int solo_standing_special_character(const char *read_line, int *i, int *words)
+{
+    if (read_line[*i] == token_pipe && check_for_pipe(read_line, i))
+        return ((*words)++, 1);
+    else if (read_line[*i] == token_redirect_in && check_for_redirect_in_and_heredoc(read_line, i))
+        return ((*words)++, 1);
+    else if (read_line[*i] == token_redirect_out && check_for_redirect_out_and_append(read_line, i));
+        return ((*words)++, 1);
+    return (0);
+}
+
+int is_word_2(const char *read_line, int *i, int *words)
+{
+    int quote_type;
+    
+    quote_type = 0;
+    while (!is_white_space(read_line[*i] && read_line[*i]))
+    {
+        if (solo_standing_special_character(read_line, i, words))
+            return (0);
+        else if (dollar_sign_exception(read_line, i, words))
+            return (0);
+        else if (quote_in_word(read_line, i, words))
+            return (0);
+        (*i)++;
+    }
+    return (1);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 int is_word(const char *read_line, int *i, int *words)
 {

@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/26 22:51:40 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/05/27 08:46:42 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,11 @@ int env_assign_check(char *string)
     i = 0;
     if (!equal_sign_check(string))
         return (0);
-    if (first_letter_check(string[0]))
+    if (!first_letter_check(string[0]))
         return (0);
     while (string[i])
     {
-        if (other_letters_check(string[i]))
+        if (!other_letters_check(string[i]))
             return (0);
         i++;
     }
@@ -207,9 +207,8 @@ int minishell(const char *read_line, char **envp)
     while (split_line[i])
     {
         printf("type: %i, value: %s\n", tokens[i].type, tokens[i].value);
-        //free(split_line[i]);
         i++;
-    }    i = 0;
+    }   
     if (syntax_check(tokens))
         return (1);
     free(tokens);

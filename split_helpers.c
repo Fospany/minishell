@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 21:09:28 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/26 22:55:53 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/05/27 10:29:21 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,41 +34,67 @@ int check_for_quote_without_quote_type(const char letter)
 
 int     is_valid_for_dollar_sign(const char letter)
 {
-    if (is_not_lower_case(letter) && is_not_upper_case(letter) && is_not_underline(letter))
-        return (0);
-    return (1);
+    if (is_lower_case(letter) || is_upper_case(letter) || is_underline(letter))
+        return (1);
+    return (0);
 }
 
-int     letter_after_dollar_is_valid(const char letter)
+int     is_terminator(const char letter)
 {
-    if (!is_valid_for_dollar_sign(letter) && is_not_number(letter))
-        return (0);
-    return (1);
+    if (letter == '\0')
+        return (1);
+    return (0);
+}
+
+int     is_astrisk(const char letter)
+{
+    if (letter == '*')
+        return (1);
+    return (0);
+}
+
+int     letter_after_dollar_is_num_or_astrisk(const char letter)
+{
+    if (is_number(letter) || is_astrisk(letter))
+        return (1);
+    return (0);
+}
+
+int     dollar_is_standing_alone(const char letter)
+{
+    if (is_white_space(letter) || is_terminator(letter))
+        return (1);
+    return (0);
+}
+
+void     process_after_dollar_sign(const char *read_line, int *i, int *words)
+{
+    while (read_line[*i] || !is_white_space(read_line[*i]))
+    {
+        if (quote_in_word(read_line, i, words))
+            return (1);
+        else if (is_heredoc_or_append(read_line[*i], read_line[(*i) + 1]))
+            return ((*i) += 2, (*words) += 2);
+        else if (is_redir_or_pipe(read_line[*i]))
+            return ((*i)++, (*words) += 2);
+        (*i)++;
+    }
+    (*words)++;
 }
 
 void    dollar_sign_exception(const char *read_line, int *i, int *words)
 {
-    int quote_type;
-    
-    quote_type = 0;
-    while (read_line[*i])
+    if (read_line[*i] == DOLLAR_SIGN)
     {
-        if (!letter_after_dollar_is_valid(read_line[++(*i)]))
-            return ;
-        if(check_for_quote(read_line[*i], &quote_type))
-        {
-            skip_to_next_quote(read_line, i, quote_type);
-            words++;
-            return ;
-        }
-        if (!is_valid_for_dollar_sign(read_line[*i]))
+        if (dollar_is_standing_alone(read_line[(*i) + 1]))
         {
             (*words)++;
-            (*i)++;
-            return ;
+            (*i) += 2;
         }
+        else if (!letter_after_dollar_is_num_or_astrisk(read_line[(*i) + 1]))
+            (*i) += 2;
         else
-            (*i)++;
+            process_after_dollar_sign(read_line, i, words);
     }
 }
 

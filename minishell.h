@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/26 21:16:00 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/05/27 09:31:11 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int     get_real_quote_type(char *word, int quote_type, int *i);
 t_envs  *env_list_creation(t_token *tokens, char **envp);
 int     letter_after_dollar_is_valid(const char letter);
 int     is_valid_for_dollar_sign(const char letter);
-void    dollar_sign_exception(const char *read_line, int *i, int *words);
+int    dollar_sign_exception(const char *read_line, int *i, int *words);
 int     valid_index_for_spec_char(const char letter, int num1, int num2);
 int     special_characters_exception(const char *read_line, int *i, int *words);
 int     is_heredoc_or_append(const char letter1, const char letter2);
@@ -91,6 +91,7 @@ int     is_special_character(const char letter1, const char letter2);
 int     is_redir_or_pipe(const char letter);
 int     quote_in_word(const char *read_line, int *i, int *words);
 int     syntax_error_message_display(char *token_value);
+int     is_dollar_sign(char letter);
 
 
 #endif
