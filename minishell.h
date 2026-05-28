@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
+/*   By: bguthy <bguthy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/28 15:22:48 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/05/28 17:27:39 by bguthy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int     env_assign_check(char *string);
 void    remove_quoted_word(char **split_line, t_token *tokens);
 int     check_for_quote_without_quote_type(const char letter);
 int     get_real_quote_type(char *word, int quote_type, int *i);
-t_envs  **env_list_creation(t_token *tokens, char **envp);
+t_envs  *env_list_creation(t_token *tokens, char **envp);
 int     dollar_sign_exception(const char *read_line, int *i, int *words);
 int     is_heredoc_or_append(const char letter1, const char letter2);
 int     is_special_character(const char *read_line, int i, int *letters);
@@ -88,7 +88,7 @@ int     quote_in_word(const char *read_line, int *i, int *words);
 int     syntax_error_message_display(char *token_value);
 int     is_dollar_sign(const char letter);
 int     is_pipe(const char letter);
-void    check_for_expansion_and_replace(t_envs **env_list, t_token *tokens);
+void    check_for_expansion_and_replace(t_envs *env_list, t_token *tokens);
 int     syntax_check(t_token *tokens);
 
 

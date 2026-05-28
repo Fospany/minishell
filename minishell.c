@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
+/*   By: bguthy <bguthy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/28 15:23:41 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/05/28 18:45:43 by bguthy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,7 +196,7 @@ int minishell(const char *read_line, char **envp)
 {
     int     i;
     t_token *tokens;
-    t_envs  **my_env_list;
+    t_envs  *my_env_list;
     char    **split_line;
     
     i = 0;
@@ -221,10 +221,7 @@ int minishell(const char *read_line, char **envp)
 
 int main(int args, char **argv, char **envp)
 {
-    
-    printf("%i\n", args);
-    printf("%s\n", argv[0]);
-    if (minishell("$ls'okcso' $PATH", envp))
+    if (minishell("$PATH", envp))
         return (1);
     return (0);
 }
