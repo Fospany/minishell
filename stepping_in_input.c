@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 20:34:44 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/27 09:33:16 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/05/28 12:23:43 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void     skip_non_white_spaces(const char *read_line, int *i)
 {
     while (!is_white_space(read_line[*i]) && read_line[*i])
     {
-        if (is_special_character(read_line[*i], read_line[(*i) + 1]))
+        if (is_redir_or_pipe(read_line[*i]))
             break ;
         (*i)++;
     }
@@ -106,13 +106,20 @@ int quote_in_word(const char *read_line, int *i, int *words)
     return (0);
 }
 
+int is_white_space_or_special_character(const char letter)
+{
+    if (is_white_space(letter) || is_redir_or_pipe(letter))
+        return (1);
+    return (0);
+}
+
 int check_for_pipe(const char *read_line, int *i)
 {
     if (*i == 0 && is_white_space(read_line[1]))
         return ((*i)++, 1);
-    else if (read_line[(*i) + 1] == '\0' && *i != 0 && is_white_space(read_line[(*i) - 1]))
+    else if (read_line[(*i) + 1] == '\0' && *i != 0 && is_white_space_or_special_character(read_line[(*i) - 1]))
         return ((*i)++, 1);
-    else if (*i != 0 && is_white_space(read_line[(*i) - 1]) && is_white_space(read_line[(*i) + 1]))
+    else if (*i != 0 && is_white_space(read_line[(*i) - 1]) && is_white_space_or_special_character(read_line[(*i) + 1]))
         return ((*i)++, 1);
     else
         return (0);
@@ -154,13 +161,43 @@ int check_for_redirect_out_and_append(const char *read_line, int *i)
 
 int solo_standing_special_character(const char *read_line, int *i, int *words)
 {
-    if (read_line[*i] == token_pipe && check_for_pipe(read_line, i))
+    if (is_pipe(read_line[*i]) && check_for_pipe(read_line, i))
         return ((*words)++, 1);
-    else if (read_line[*i] == token_redirect_in && check_for_redirect_in_and_heredoc(read_line, i))
+    else if (read_line[*i] == '<' && check_for_redirect_in_and_heredoc(read_line, i))
         return ((*words)++, 1);
-    else if (read_line[*i] == token_redirect_out && check_for_redirect_out_and_append(read_line, i));
+    else if (read_line[*i] == '>' && check_for_redirect_out_and_append(read_line, i))
         return ((*words)++, 1);
     return (0);
+}
+
+int is_pipe(const char letter)
+{
+    if (letter == '|')
+        return (1);
+    return (0);
+}
+
+int is_redir(const char letter)
+{
+    if (letter == REDIR_IN || letter == REDIR_OUT)
+        return (1);
+    return (0);
+}
+
+int check_for_special_character(const char *read_line, int *i, int *words)
+{
+    if (is_pipe(read_line[*i]) && !is_redir_or_pipe(read_line[(*i) - 1]))
+        return ((*words) += 2, (*i)++, 1);
+    else if (is_pipe(read_line[*i]))
+        return ((*words)++, (*i)++, 1);
+    else if (is_heredoc_or_append(read_line[*i], read_line[(*i) + 1]) && !is_redir_or_pipe(read_line[(*i) - 1]))
+        return ((*words) += 2, (*i) += 2, 1);
+    else if (is_heredoc_or_append(read_line[*i], read_line[(*i) + 1]))
+        return ((*words)++, (*i) += 2, 1);
+    else if (is_redir(read_line[*i]) && !is_redir_or_pipe(read_line[(*i) - 1]))
+        return ((*words) += 2, (*i)++, 1);
+    else if (is_redir(read_line[*i]))
+        return ((*words)++, (*i)++, 1);
 }
 
 int is_word_2(const char *read_line, int *i, int *words)
@@ -168,7 +205,7 @@ int is_word_2(const char *read_line, int *i, int *words)
     int quote_type;
     
     quote_type = 0;
-    while (!is_white_space(read_line[*i] && read_line[*i]))
+    while (!is_white_space(read_line[*i]) && read_line[*i])
     {
         if (solo_standing_special_character(read_line, i, words))
             return (0);
@@ -176,47 +213,9 @@ int is_word_2(const char *read_line, int *i, int *words)
             return (0);
         else if (quote_in_word(read_line, i, words))
             return (0);
+        else if (check_for_special_character(read_line, i, words))
+            return (0);
         (*i)++;
     }
     return (1);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-int is_word(const char *read_line, int *i, int *words)
-{
-    int start;
-    int flag;
-    
-    start = *i;
-    flag = 0;
-    while (!is_white_space(read_line[*i]) && read_line[*i])
-    {
-        if (quote_in_word(read_line, i, words))
-            return (0);
-        if (valid_index_for_spec_char(read_line[(*i) + 1], *i, start) && special_characters_exception(read_line, i, words))
-        {
-            flag = 1;
-            if (is_white_space(read_line[*i]))
-                return (0);
-        }
-        else
-            (*i)++;
-    }
-    if (flag && !read_line[*i])
-        return (0);
-    else
-        return (1);
 }

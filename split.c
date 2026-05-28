@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 14:02:51 by bguthy            #+#    #+#             */
-/*   Updated: 2026/05/27 08:48:52 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/05/28 12:30:40 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,11 @@ char    *copy_till_next_word(const char *read_line, int *i)
     while (!is_white_space(read_line[*i]) && read_line[*i])
     {
         new_word[local_index++] = read_line[(*i)++];
-        if (is_heredoc_or_append(read_line[*i], read_line[(*i) + 1]) && local_index > 0)
+        if (check_for_quote_without_quote_type(read_line[*i]))
             break ;
-        else if ((is_redir_or_pipe(read_line[*i]) && local_index > 0 && !is_redir_or_pipe(new_word[local_index - 1])) || (is_redir_or_pipe(new_word[local_index - 1])))
+        if (is_heredoc_or_append(read_line[*i], read_line[(*i) + 1]) && local_index > 0 && local_index >= letters)
+            break ;
+        else if ((is_redir_or_pipe(read_line[*i]) && local_index > 0 && !is_redir_or_pipe(new_word[local_index - 1])) || (is_redir_or_pipe(new_word[local_index - 1])) && local_index >= letters)
             break ;
     }
     new_word[local_index] = 0;

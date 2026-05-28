@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/27 08:46:42 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/05/28 12:22:31 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ int minishell(const char *read_line, char **envp)
 
 int main(int args, char **argv, char **envp)
 {
-    if (minishell("$cat", envp))
+    if (minishell("ls'>|>|'>> cat", envp))
         return (1);
     return (0);
 }
