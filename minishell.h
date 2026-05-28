@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/28 12:07:22 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/05/28 15:22:48 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ typedef struct s_envs
 
 typedef struct s_token
 {
-    int             id;
     char            *value;
     t_token_type    type;
 }                   t_token;
@@ -80,18 +79,17 @@ int     env_assign_check(char *string);
 void    remove_quoted_word(char **split_line, t_token *tokens);
 int     check_for_quote_without_quote_type(const char letter);
 int     get_real_quote_type(char *word, int quote_type, int *i);
-t_envs  *env_list_creation(t_token *tokens, char **envp);
-int     is_valid_for_dollar_sign(const char letter);
+t_envs  **env_list_creation(t_token *tokens, char **envp);
 int     dollar_sign_exception(const char *read_line, int *i, int *words);
-int     valid_index_for_spec_char(const char letter, int num1, int num2);
-int     special_characters_exception(const char *read_line, int *i, int *words);
 int     is_heredoc_or_append(const char letter1, const char letter2);
 int     is_special_character(const char *read_line, int i, int *letters);
 int     is_redir_or_pipe(const char letter);
 int     quote_in_word(const char *read_line, int *i, int *words);
 int     syntax_error_message_display(char *token_value);
-int     is_dollar_sign(char letter);
+int     is_dollar_sign(const char letter);
 int     is_pipe(const char letter);
+void    check_for_expansion_and_replace(t_envs **env_list, t_token *tokens);
+int     syntax_check(t_token *tokens);
 
 
 #endif

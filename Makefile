@@ -4,9 +4,12 @@ SOURCE =	split.c \
 			minishell.c \
 			split_helpers.c \
 			rest_helpers.c \
+			expansion_check.c \
 			stepping_in_input.c \
 			env_assign_helpers.c \
-			syntax_error_check.c 
+			syntax_error_check.c \
+			environment_creation.c 
+
 
 
 CFLAGS = -Wall -Wextra -Werror -g

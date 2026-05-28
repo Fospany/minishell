@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/28 12:22:31 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/05/28 15:23:41 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include "split.c"
 #include "stepping_in_input.c"
 #include "syntax_error_check.c"
+#include "expansion_check.c"
+#include "environment_creation.c"
 #include <string.h>
 
 
@@ -45,7 +47,6 @@ void    create_structs(t_token *tokens, char **line)
     i = 0;
     while (line[i])
     {
-        tokens[i].id = i;
         tokens[i].value = line[i];
         tokens[i].type = tokenizer(line[i]);
         i++;
@@ -195,15 +196,17 @@ int minishell(const char *read_line, char **envp)
 {
     int     i;
     t_token *tokens;
-    t_envs  *my_env_list;
+    t_envs  **my_env_list;
     char    **split_line;
     
     i = 0;
     split_line = split(read_line);
     printf("%i\n", word_counter(read_line));
     tokens = malloc(sizeof(t_token) * (word_counter(read_line) + 1));
+    my_env_list = env_list_creation(tokens, envp);
     create_structs(tokens, split_line);
     remove_quoted_word(split_line, tokens);
+    check_for_expansion_and_replace(my_env_list, tokens);
     while (split_line[i])
     {
         printf("type: %i, value: %s\n", tokens[i].type, tokens[i].value);
@@ -218,7 +221,10 @@ int minishell(const char *read_line, char **envp)
 
 int main(int args, char **argv, char **envp)
 {
-    if (minishell("ls'>|>|'>> cat", envp))
+    
+    printf("%i\n", args);
+    printf("%s\n", argv[0]);
+    if (minishell("$ls'okcso' $PATH", envp))
         return (1);
     return (0);
 }
