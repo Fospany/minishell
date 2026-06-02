@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/02 16:11:40 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/06/02 16:20:35 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,7 +220,7 @@ int minishell(const char *read_line, char **envp)
 
 int main(int args, char **argv, char **envp)
 {
-    if (minishell("$COLORTERM$FASZ", envp))
+    if (minishell("$'COL'fasz", envp))
         return (1);
     return (0);
 }

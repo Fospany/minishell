@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:53:31 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/06/02 16:10:26 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/06/02 16:16:45 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,6 +228,8 @@ void    create_the_whole_word(char *expandable, t_envs *env_list, char *fully_ex
     {
         if (is_dollar_sign(expandable[i]))
         {
+            if (!check_if_in_env_list(env_list, expandable + i))
+                return ;
             i++;
             i += copy_from_env_list(env_list, expandable  + i, fully_expanded, &j);
         }
