@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguthy <bguthy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/28 17:27:39 by bguthy           ###   ########.fr       */
+/*   Updated: 2026/06/02 15:49:32 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,14 @@ int     is_redir_or_pipe(const char letter);
 int     quote_in_word(const char *read_line, int *i, int *words);
 int     syntax_error_message_display(char *token_value);
 int     is_dollar_sign(const char letter);
+int     ft_strlen(const char *s);
 int     is_pipe(const char letter);
-void    check_for_expansion_and_replace(t_envs *env_list, t_token *tokens);
 int     syntax_check(t_token *tokens);
+int     skip_to_next_dollar_sign(char *expandable);
+void    copy_till_next_dollar(char *dest, char *source);
+int     copy_from_env_list(t_envs *env_list, char *expandable, char *fuly_expanded, int *index);
+int     count_letters_in_expansion(char *expandable);
+
 
 
 #endif

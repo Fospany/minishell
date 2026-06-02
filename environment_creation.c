@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   environment_creation.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguthy <bguthy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 11:41:39 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/05/28 17:38:50 by bguthy           ###   ########.fr       */
+/*   Updated: 2026/06/02 12:07:30 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 int     number_of_env_variables(char **envp, t_token *tokens)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguthy <bguthy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/28 18:45:43 by bguthy           ###   ########.fr       */
+/*   Updated: 2026/06/02 16:11:40 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 #include "expansion_check.c"
 #include "environment_creation.c"
 #include <string.h>
-
 
 int tokenizer(char *input)
 {
@@ -203,10 +202,10 @@ int minishell(const char *read_line, char **envp)
     split_line = split(read_line);
     printf("%i\n", word_counter(read_line));
     tokens = malloc(sizeof(t_token) * (word_counter(read_line) + 1));
-    my_env_list = env_list_creation(tokens, envp);
     create_structs(tokens, split_line);
+    my_env_list = env_list_creation(tokens, envp);
     remove_quoted_word(split_line, tokens);
-    check_for_expansion_and_replace(my_env_list, tokens);
+    handle_expansions(my_env_list, tokens);
     while (split_line[i])
     {
         printf("type: %i, value: %s\n", tokens[i].type, tokens[i].value);
@@ -214,14 +213,14 @@ int minishell(const char *read_line, char **envp)
     }   
     if (syntax_check(tokens))
         return (1);
-    free(tokens);
-    free(split_line);
+    // free(tokens);
+    // free(split_line);
     return (0);
 }
 
 int main(int args, char **argv, char **envp)
 {
-    if (minishell("$PATH", envp))
+    if (minishell("$COLORTERM$FASZ", envp))
         return (1);
     return (0);
 }

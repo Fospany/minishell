@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 21:09:28 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/28 15:21:53 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/06/02 13:00:33 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int     dollar_is_standing_alone(const char letter)
 
 void     process_after_dollar_sign(const char *read_line, int *i, int *words)
 {
-    while (read_line[*i] || is_white_space(read_line[*i]))
+    while (read_line[*i] && !is_white_space(read_line[*i]))
     {
         if (check_for_quote_without_quote_type(read_line[*i]))
         {
