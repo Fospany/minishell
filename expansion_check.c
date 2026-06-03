@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_check.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
+/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:53:31 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/06/02 16:16:45 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/06/03 19:36:02 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,22 +26,6 @@ void    copy_till_next_dollar(char *dest, char *source)
         i++;
     }
     dest[i] = 0;
-}
-
-int     skip_to_next_dollar_sign(char *expandable)
-{
-    int dollar_signs;
-    int i;
-
-    i = 0;
-    dollar_signs = 0;
-    while (expandable[i])
-    {
-        if (is_dollar_sign(expandable[i]) || check_for_quote_without_quote_type(expandable[i]))
-            break ;
-        i++;
-    }
-    return (i);
 }
 
 int     ft_strlen(const char *s)
@@ -68,7 +52,6 @@ int     dollar_in_word(char *word)
     }
     return (0);
 }
-
 
 char    *create_mock_word(char *expandable)
 {
@@ -99,11 +82,9 @@ int     check_if_in_env_list(t_envs *env_list, char *expandable)
 
 int     get_length_of_expansion(t_envs *env_list, char *expandable)
 {
-    int letters;
     int i;
 
     i = 0;
-    letters = 0;
     while (env_list[i].value)
     {
         if (string_compare(env_list[i].key, expandable))
@@ -118,7 +99,7 @@ int     count_letters_till_next_quote(char *word, int quote_type, int *i)
     int letters;
 
     letters = 0;
-    *i++;
+    (*i)++;
     while (word[*i])
     {
         if (word[*i] == quote_type)
@@ -175,6 +156,7 @@ int     count_letters_in_expansion(char *expandable)
             return (i);
         i++;
     }
+    return (i);
 }
 
 int    copy_from_env_list(t_envs *env_list, char *expandable, char *fully_expanded, int *index)
@@ -215,6 +197,48 @@ int     copy_until_next_quote(const char *expandable, char *fully_expanded, int 
     return (i);
 }
 
+int     digit_counter(pid_t pid)
+{
+    int digits;
+    
+    digits = 0;
+    while (pid > 0)
+    {
+        pid /= 10;
+        digits++;
+    }
+    return (digits);
+}
+
+char    *my_itoa(pid_t pid)
+{
+    int     digits;
+    char    *pid_string;
+    
+    pid = (int)pid;
+    digits = digit_counter(pid);
+    pid_string = malloc(sizeof(char) * (digits + 1));
+    digits--;
+    while (pid > 0)
+    {
+        pid_string[digits--] = pid % 10 + '0';
+        pid /= 10;
+    }
+    pid_string[digits] = 0;
+    return (pid_string);
+}
+
+void    handle_double_dollars(char *fully_expanded, int *index)
+{
+    char    *pid;
+    int     i;
+    
+    i = 0;
+    pid = my_itoa(getpid());
+    while (pid[i])
+        fully_expanded[(*index)++] = pid[i++];
+}
+
 void    create_the_whole_word(char *expandable, t_envs *env_list, char *fully_expanded)
 {
     int i;
@@ -228,7 +252,12 @@ void    create_the_whole_word(char *expandable, t_envs *env_list, char *fully_ex
     {
         if (is_dollar_sign(expandable[i]))
         {
-            if (!check_if_in_env_list(env_list, expandable + i))
+            if (is_dollar_after_dollar(expandable[i + 1]))
+            {
+                handle_double_dollars(fully_expanded, &j);
+                i++;
+            }
+            else if (!check_if_in_env_list(env_list, expandable + i))
                 return ;
             i++;
             i += copy_from_env_list(env_list, expandable  + i, fully_expanded, &j);

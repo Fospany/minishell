@@ -1,41 +1,50 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_assign_helpers.c                               :+:      :+:    :+:   */
+/*   special_characters_checkers.c                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/20 17:00:28 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/03 19:13:38 by bguhty           ###   ########.fr       */
+/*   Created: 2026/06/03 17:27:09 by bguhty            #+#    #+#             */
+/*   Updated: 2026/06/03 17:51:33 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int     is_lower_case(char letter)
+int is_redir_in(const char letter)
 {
-    if (letter >= a && letter <= z)
+    if (letter == REDIR_IN)
         return (1);
     return (0);
 }
 
-int     is_upper_case(char letter)
+int is_redir_out(const char letter)
 {
-    if (letter >= A && letter <= Z)
+    if (letter == REDIR_OUT)
         return (1);
     return (0);
 }
 
-int     is_number(char letter)
+int is_pipe(const char letter)
 {
-    if (letter >= '0' && letter <= '9')
+    if (letter == '|')
         return (1);
     return (0);
 }
 
-int     is_underline(char letter)
+int     is_redir_or_pipe(const char letter)
 {
-    if (letter == '_')
+    if (is_redir(letter) || is_pipe(letter))
+        return (1);
+    return (0);
+}
+
+int     is_heredoc_or_append(const char letter1, const char letter2)
+{
+    if (is_redir_in(letter1) && is_redir_in(letter2))
+        return (1);
+    else if (is_redir_out(letter1) && is_redir_out(letter2))
         return (1);
     return (0);
 }

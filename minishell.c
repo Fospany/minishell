@@ -3,88 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
+/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/02 16:20:35 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/06/03 19:36:41 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "env_assign_helpers.c"
-#include "rest_helpers.c"
-#include "split_helpers.c"
-#include "split.c"
-#include "stepping_in_input.c"
-#include "syntax_error_check.c"
-#include "expansion_check.c"
-#include "environment_creation.c"
-#include <string.h>
-
-int tokenizer(char *input)
-{
-    if (env_assign_check(input))
-        return token_env_assign;
-    else if (string_compare(input, "|"))
-        return token_pipe;
-    else if (string_compare(input, ">>"))
-        return token_append;
-    else if (string_compare(input, "<<"))
-        return token_heredoc;
-    else if (string_compare(input, "<"))
-        return token_redirect_in;
-    else if (string_compare(input, ">"))
-        return token_redirect_out;
-    else
-        return token_word;
-}
-
-void    create_structs(t_token *tokens, char **line)
-{
-    int i;
-    
-    i = 0;
-    while (line[i])
-    {
-        tokens[i].value = line[i];
-        tokens[i].type = tokenizer(line[i]);
-        i++;
-    }
-    tokens[i].value = NULL;
-    tokens[i].type = -1;
-}
-
-int equal_sign_check(char *string)
-{
-    int i;
-    
-    i = 0;
-    while (string[i])
-    {
-        if (string[i] == EQUAL_SIGN)
-            return (1);
-        i++;
-    }
-    return (0);
-}
-
-int env_assign_check(char *string)
-{
-    int i;
-
-    i = 0;
-    if (!equal_sign_check(string))
-        return (0);
-    if (!first_letter_check(string[0]))
-        return (0);
-    while (string[i])
-    {
-        if (!other_letters_check(string[i]))
-            return (0);
-        i++;
-    }
-    return (1);
-}
+// #include "env_assign_helpers.c"
+// #include "rest_helpers.c"
+// #include "split_helpers.c"
+// #include "split.c"
+// #include "stepping_in_input.c"
+// #include "syntax_error_check.c"
+// #include "expansion_check.c"
+// #include "environment_creation.c"
 
 int determine_quote_type(char letter, int quote_type)
 {
@@ -110,7 +44,7 @@ int count_valid_char(char *quoted_word)
     i = 0;
     while (quoted_word[i])
     {
-        get_real_quote_type(quoted_word, quote_type, &i);
+        get_real_quote_type(quoted_word, &quote_type, &i);
         if (quoted_word[i] != quote_type)
         {
             counter++;
@@ -120,23 +54,22 @@ int count_valid_char(char *quoted_word)
     return (counter);
 }
 
-int get_real_quote_type(char *word, int quote_type, int *i)
+void get_real_quote_type(char *word, int *quote_type, int *i)
 {
-    while (check_for_quote(word[*i], &quote_type) && word[*i] == word[(*i) + 1])
+    while (check_for_quote(word[*i], quote_type) && word[*i] == word[(*i) + 1])
         (*i)++;
-    if (!check_for_quote(word[*i], &quote_type))
-        return (quote_type);
-    if (quote_type != 0)
+    if (!check_for_quote(word[*i], quote_type))
+        return ;
+    if (*quote_type != 0)
     {
-        if ((quote_type = determine_quote_type(word[*i], quote_type)) == 0)
+        if ((*quote_type = determine_quote_type(word[*i], *quote_type)) == 0)
             (*i)++;
     }
     else
     {
-        quote_type = determine_quote_type(word[*i], quote_type);
+        *quote_type = determine_quote_type(word[*i], *quote_type);
         (*i)++;
     }
-    return (quote_type);
 }
 
 char    *get_rid_of_quotes(char *word)
@@ -154,7 +87,7 @@ char    *get_rid_of_quotes(char *word)
         return (NULL);
     while (word[i])
     {
-        quote_type = get_real_quote_type(word, quote_type, &i);
+        get_real_quote_type(word, &quote_type, &i);
         if (word[i] != quote_type && word[i])
         {
             new_word[local_index++] = word[i++];
@@ -191,7 +124,7 @@ void    remove_quoted_word(char **split_line, t_token *tokens)
     }
 }
 
-int minishell(const char *read_line, char **envp)
+int minishell(const char *read_line)
 {
     int     i;
     t_token *tokens;
@@ -199,11 +132,11 @@ int minishell(const char *read_line, char **envp)
     char    **split_line;
     
     i = 0;
-    split_line = split(read_line);
+    split_line = split_read_line(read_line);
     printf("%i\n", word_counter(read_line));
     tokens = malloc(sizeof(t_token) * (word_counter(read_line) + 1));
-    create_structs(tokens, split_line);
-    my_env_list = env_list_creation(tokens, envp);
+    create_token_struct(tokens, split_line);
+    my_env_list = env_list_creation(tokens);
     remove_quoted_word(split_line, tokens);
     handle_expansions(my_env_list, tokens);
     while (split_line[i])
@@ -213,14 +146,12 @@ int minishell(const char *read_line, char **envp)
     }   
     if (syntax_check(tokens))
         return (1);
-    // free(tokens);
-    // free(split_line);
     return (0);
 }
 
-int main(int args, char **argv, char **envp)
+int main()
 {
-    if (minishell("$'COL'fasz", envp))
+    if (minishell("lofasz$$$festek"))
         return (1);
     return (0);
 }

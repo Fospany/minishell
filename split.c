@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   split.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
+/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 14:02:51 by bguthy            #+#    #+#             */
-/*   Updated: 2026/05/28 13:52:25 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/06/03 17:16:24 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 char    *copy_till_next_word(const char *read_line, int *i)
 {
@@ -86,7 +85,7 @@ void    fill_up_double_pointer(char **split_line, const char *read_line)
     split_line[w] = NULL;
 }
 
-char    **split(const char *read_line)
+char    **split_read_line(const char *read_line)
 {
     char    **split_line;
 

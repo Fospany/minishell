@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
+/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/02 15:49:32 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/06/03 19:31:50 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 # include <stdlib.h>
 # include <string.h>
 # include <errno.h>
+# include <sys/types.h>
 
 typedef enum e_token_type
 {
@@ -64,7 +65,7 @@ int     is_number(char letter);
 int     is_upper_case(char letter);
 int     is_lower_case(char letter);
 void	fill_up_double_pointer(char **split_line, const char *read_line);
-char	**split(const char *read_line);
+char	**split_read_line(const char *read_line);
 char	**allocating_double_pointer(const char *read_line);
 int		count_letters(const char *read_line, int i);
 int		word_counter(const char *read_line);
@@ -78,8 +79,8 @@ void    split_clean_up(char **split_line, int i);
 int     env_assign_check(char *string);
 void    remove_quoted_word(char **split_line, t_token *tokens);
 int     check_for_quote_without_quote_type(const char letter);
-int     get_real_quote_type(char *word, int quote_type, int *i);
-t_envs  *env_list_creation(t_token *tokens, char **envp);
+void    get_real_quote_type(char *word, int *quote_type, int *i);
+t_envs  *env_list_creation(t_token *tokens);
 int     dollar_sign_exception(const char *read_line, int *i, int *words);
 int     is_heredoc_or_append(const char letter1, const char letter2);
 int     is_special_character(const char *read_line, int i, int *letters);
@@ -94,7 +95,25 @@ int     skip_to_next_dollar_sign(char *expandable);
 void    copy_till_next_dollar(char *dest, char *source);
 int     copy_from_env_list(t_envs *env_list, char *expandable, char *fuly_expanded, int *index);
 int     count_letters_in_expansion(char *expandable);
-
+int     tokenizer(char *input);
+void    create_token_struct(t_token *tokens, char **line);
+int     equal_sign_check(char *string);
+int     env_assign_check(char *string);
+int     check_for_redirect_out_and_append(const char *read_line, int *i);
+int     check_for_redirect_in_and_heredoc(const char *read_line, int *i);
+int     check_for_pipe(const char *read_line, int *i);
+int     dollar_is_standing_alone(const char letter);
+void    process_after_dollar_sign(const char *read_line, int *i, int *words);
+int     is_dollar_after_dollar(const char letter);
+int     is_redir(const char letter);
+int     is_redir_in(const char letter);
+int     is_redir_out(const char letter);
+void    handle_expansions(t_envs *env_list, t_token *tokens);
+int     is_astrisk(const char letter);
+int     is_terminator(const char letter);
+int     letter_after_dollar_is_num_or_astrisk(const char letter);
+int     is_underline(char letter);
+int     is_white_space_or_special_character(const char letter);
 
 
 #endif

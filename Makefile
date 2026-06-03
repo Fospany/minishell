@@ -8,7 +8,14 @@ SOURCE =	split.c \
 			stepping_in_input.c \
 			env_assign_helpers.c \
 			syntax_error_check.c \
-			environment_creation.c 
+			environment_creation.c \
+			dollar_sign_handler.c \
+			env_assign.c \
+			is_special_character.c \
+			skippers.c \
+			special_characters_checkers.c \
+			tokenizing.c \
+			word_count_helpers.c \
 
 
 
