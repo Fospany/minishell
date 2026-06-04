@@ -20,25 +20,35 @@ SOURCE =	split.c \
 
 
 CFLAGS = -Wall -Wextra -Werror -g
+READLINE_FLAG = -lreadline
 
 CC = cc
 
+LIBFT_DIR = libft
+LIBFT = ${LIBFT_DIR}/libft.a
+
 OBJECTS = $(SOURCE:.c=.o)
-
-$(NAME) : $(OBJECTS)
-		$(CC) $(CFLAGS) $(SOURCE) -o $(NAME)
-
 
 all: $(NAME)
 
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(LIBFT):
+	@make -C $(LIBFT_DIR)
+
+$(NAME) : $(OBJECTS) $(LIBFT)
+	$(CC) $(CFLAGS) $(SOURCE) $(LIBFT) -o $(NAME) $(READLINE_FLAG)
+
 clean:
+	@make -C $(LIBFT_DIR) clean
 	rm -f $(OBJECTS)
 
 fclean:
+	@make -C $(LIBFT_DIR) fclean
 	rm -f $(OBJECTS)
 	rm -f $(NAME)
 
 re: fclean all
 
-
-.PHONY = all clean fclean re
+.PHONY: all clean fclean re

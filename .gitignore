@@ -1,0 +1,9 @@
+*.o
+*.a
+*.d
+a.out
+.DS_Store
+.vscode/
+*.dSYM/
+.zed/
+minishell
