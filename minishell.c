@@ -38,7 +38,7 @@ int count_valid_char(char *quoted_word)
     int i;
     int counter;
     int quote_type;
-    
+
     quote_type = 0;
     counter = 0;
     i = 0;
@@ -78,7 +78,7 @@ char    *get_rid_of_quotes(char *word)
     int     quote_type;
     char    *new_word;
     int     local_index;
-    
+
     i = 0;
     quote_type = 0;
     local_index = 0;
@@ -104,7 +104,7 @@ void    remove_quoted_word(char **split_line, t_token *tokens)
 {
     int i;
     int j;
-    
+
     i = 0;
     j = 0;
     while (split_line[i])
@@ -130,7 +130,7 @@ int minishell(const char *read_line)
     t_token *tokens;
     t_envs  *my_env_list;
     char    **split_line;
-    
+
     i = 0;
     split_line = split_read_line(read_line);
     printf("%i\n", word_counter(read_line));
@@ -143,7 +143,7 @@ int minishell(const char *read_line)
     {
         printf("type: %i, value: %s\n", tokens[i].type, tokens[i].value);
         i++;
-    }   
+    }
     if (syntax_check(tokens))
         return (1);
     return (0);
@@ -151,6 +151,31 @@ int minishell(const char *read_line)
 
 int main()
 {
+	char *path;
+	char *str;
+	char **av;
+	char  *tmp;
+	extern char **environ;
+	pid_t pid;
+
+	path = "/bin/";
+	tmp = path;
+	(void) tmp;
+	while ((str = readline("vibeshell: ")))
+	{
+		av = split_read_line(str);
+		tmp = ft_strjoin(path, av[0]);
+		pid = fork();
+		if (pid == 0)
+		{
+			execve(tmp, av, environ);
+			perror("execve");
+			exit(1);
+		}
+		waitpid(pid, NULL, 0);
+	}
+	if (!path)
+		return 0;
     if (minishell("lofasz$$$festek"))
         return (1);
     return (0);

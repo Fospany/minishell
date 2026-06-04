@@ -34,6 +34,10 @@
 # include <string.h>
 # include <errno.h>
 # include <sys/types.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+# include "libft/libft.h"
+
 
 typedef enum e_token_type
 {
@@ -88,7 +92,7 @@ int     is_redir_or_pipe(const char letter);
 int     quote_in_word(const char *read_line, int *i, int *words);
 int     syntax_error_message_display(char *token_value);
 int     is_dollar_sign(const char letter);
-int     ft_strlen(const char *s);
+// int     ft_strlen(const char *s);
 int     is_pipe(const char letter);
 int     syntax_check(t_token *tokens);
 int     skip_to_next_dollar_sign(char *expandable);
