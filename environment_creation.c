@@ -42,7 +42,7 @@ int     value_counter(const char *envp)
 {
     int i;
     int final;
-    
+
     i = 0;
     while (envp[i] != EQUAL_SIGN)
         i++;
@@ -51,7 +51,7 @@ int     value_counter(const char *envp)
     while (envp[i])
         i++;
     return (i - final);
-    
+
 }
 
 t_envs  copy_from_token_list(t_token tokens)
@@ -97,7 +97,7 @@ void    fill_up_env_list(t_envs *env_list, t_token *tokens)
 t_envs    *env_list_creation(t_token *tokens)
 {
     t_envs *env_list;
-    
+
     env_list = malloc(sizeof(t_envs) * (number_of_env_variables(tokens) + 1));
     if (!env_list)
         return (NULL);

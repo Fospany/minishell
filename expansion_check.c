@@ -16,7 +16,7 @@
 void    copy_till_next_dollar(char *dest, char *source)
 {
     int i;
-    
+
     i = 0;
     while (source[i] && !is_dollar_sign(source[i]))
     {
@@ -28,21 +28,22 @@ void    copy_till_next_dollar(char *dest, char *source)
     dest[i] = 0;
 }
 
-int     ft_strlen(const char *s)
-{
-    int i;
+// int     ft_strlen(const char *s)
+// {
+//     int i;
 
-    i = 0;
-    if (!s)
-        return (i);
-    while (s[i])
-        i++;
-    return (i);
-}
+//     i = 0;
+//     if (!s)
+//         return (i);
+//     while (s[i])
+//         i++;
+//     return (i);
+// }
+
 int     dollar_in_word(char *word)
 {
     int i;
-    
+
     i = 0;
     while (word[i])
     {
@@ -68,7 +69,7 @@ int     check_if_in_my_env_list(t_envs *env_list, char *expandable)
 {
     int i;
     char    *new_word;
-    
+
     new_word = malloc(sizeof(char) * (skip_to_next_dollar_sign(expandable) + 1));
     copy_till_next_dollar(new_word, expandable);
     i = 0;
@@ -120,12 +121,12 @@ int     get_full_len_of_expandable(char *expandable, t_envs *env_list)
     int     i;
     int     len;
     int     quote_type;
-    
+
     quote_type = 0;
     i = 0;
     len = 0;
     while (expandable[i])
-    {  
+    {
         mock_word = create_mock_word(expandable + i);
         i += ft_strlen(mock_word);
         len += get_length_of_expansion(env_list, mock_word);
@@ -165,7 +166,7 @@ int    copy_from_env_list(t_envs *env_list, char *expandable, char *fully_expand
     int i;
     int j;
     char    *new_word;
-    
+
     i = 0;
     j = 0;
     new_word = malloc(sizeof(char) * (skip_to_next_dollar_sign(expandable) + 1));
@@ -201,7 +202,7 @@ int     copy_until_next_quote(const char *expandable, char *fully_expanded, int 
 int     digit_counter(pid_t pid)
 {
     int digits;
-    
+
     digits = 0;
     while (pid > 0)
     {
@@ -215,7 +216,7 @@ char    *my_itoa(pid_t pid)
 {
     int     digits;
     char    *pid_string;
-    
+
     pid = (int)pid;
     digits = digit_counter(pid);
     pid_string = malloc(sizeof(char) * (digits + 1));
@@ -232,7 +233,7 @@ void    handle_double_dollars(char *fully_expanded, int *index)
 {
     char    *pid;
     int     i;
-    
+
     i = 0;
     pid = my_itoa(getpid());
     while (pid[i])
@@ -354,7 +355,7 @@ char    *expand_env_assign(char *expandable, t_envs *env_list, int *index)
 void    handle_expansions(t_envs *env_list, t_token *tokens)
 {
     int i;
-    
+
     i = 0;
     while (tokens[i].value)
     {
