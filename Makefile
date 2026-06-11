@@ -1,5 +1,5 @@
 NAME = minishell
-
+OBJDIR = obj
 SOURCE =	split.c \
 			minishell.c \
 			split_helpers.c \
@@ -27,26 +27,27 @@ CC = cc
 LIBFT_DIR = libft
 LIBFT = ${LIBFT_DIR}/libft.a
 
-OBJECTS = $(SOURCE:.c=.o)
+OBJECTS = $(SOURCE:%.c=$(OBJDIR)/%.o)
 
 all: $(NAME)
 
-%.o: %.c
+$(OBJDIR)/%.o: %.c
+	@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(LIBFT):
 	@make -C $(LIBFT_DIR)
 
 $(NAME) : $(OBJECTS) $(LIBFT)
-	$(CC) $(CFLAGS) $(SOURCE) $(LIBFT) -o $(NAME) $(READLINE_FLAG)
+	$(CC) $(CFLAGS) $(OBJECTS) $(LIBFT) -o $(NAME) $(READLINE_FLAG)
 
 clean:
 	@make -C $(LIBFT_DIR) clean
-	rm -f $(OBJECTS)
+	rm -rf $(OBJDIR)
 
 fclean:
 	@make -C $(LIBFT_DIR) fclean
-	rm -f $(OBJECTS)
+	rm -rf $(OBJDIR)
 	rm -f $(NAME)
 
 re: fclean all

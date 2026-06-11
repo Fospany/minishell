@@ -23,12 +23,12 @@ t_list	*ft_lstnew(void *content)
 	list->next = NULL;
 	return (list);
 }
-void	ft_lstadd_front(t_list **lst, t_list *new)
+void	ft_lstadd_front(t_list **lst, t_list *new_list)
 {
-	if (!lst || !new)
+	if (!lst || !new_list)
 		return ;
-	new->next = *lst;
-	*lst = new;
+	new_list->next = *lst;
+	*lst = new_list;
 }
 
 int	ft_lstsize(t_list *lst)

@@ -160,7 +160,6 @@ int main()
 
 	path = "/bin/";
 	tmp = path;
-	(void) tmp;
 	while ((str = readline("vibeshell: ")))
 	{
 		av = split_read_line(str);
@@ -173,6 +172,7 @@ int main()
 			exit(1);
 		}
 		waitpid(pid, NULL, 0);
+		//free arguments of av
 	}
 	if (!path)
 		return 0;
