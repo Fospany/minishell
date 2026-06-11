@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 11:41:39 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/06/03 12:40:36 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/09 13:48:11 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int     number_of_env_variables(t_token *tokens)
     int env_variables;
 
     i = 0;
+    env_variables = 0;
     while (tokens[i].value != NULL)
     {
         if (tokens[i].type == token_env_assign)

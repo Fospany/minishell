@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 21:09:28 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/03 17:36:34 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/04 15:18:03 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int word_counter(const char *read_line)
         skip_white_spaces(read_line, &i);
         quote_in_word(read_line, &i, &words);
         skip_white_spaces(read_line, &i);
-        if (is_word_2(read_line, &i, &words) && read_line[i])
+        if (is_word_2(read_line, &i, &words))
             words++;
     }
     return (words);

@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/03 19:31:50 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/04 16:03:56 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,8 @@ int     is_terminator(const char letter);
 int     letter_after_dollar_is_num_or_astrisk(const char letter);
 int     is_underline(char letter);
 int     is_white_space_or_special_character(const char letter);
+int     key_counter(const char *envp);
+char    *expand_env_assign(char *expandable, t_envs *env_list, int *index);
 
 
 #endif

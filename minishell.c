@@ -6,19 +6,26 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/03 19:36:41 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/09 13:46:17 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-// #include "env_assign_helpers.c"
-// #include "rest_helpers.c"
-// #include "split_helpers.c"
-// #include "split.c"
-// #include "stepping_in_input.c"
-// #include "syntax_error_check.c"
-// #include "expansion_check.c"
-// #include "environment_creation.c"
+#include "env_assign_helpers.c"
+#include "rest_helpers.c"
+#include "split_helpers.c"
+#include "split.c"
+#include "stepping_in_input.c"
+#include "syntax_error_check.c"
+#include "expansion_check.c"
+#include "environment_creation.c"
+#include "skippers.c"
+#include "tokenizing.c"
+#include "env_assign.c"
+#include "dollar_sign_handler.c"
+#include "is_special_character.c"
+#include "special_characters_checkers.c"
+#include "word_count_helpers.c"
 
 int determine_quote_type(char letter, int quote_type)
 {
@@ -151,7 +158,7 @@ int minishell(const char *read_line)
 
 int main()
 {
-    if (minishell("lofasz$$$festek"))
+    if (minishell("festek=fasz"))
         return (1);
     return (0);
 }
