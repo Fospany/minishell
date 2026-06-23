@@ -6,12 +6,11 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:53:31 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/06/09 14:06:04 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/23 13:19:03 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 void    copy_till_next_dollar(char *dest, char *source)
 {
@@ -27,18 +26,6 @@ void    copy_till_next_dollar(char *dest, char *source)
     }
     dest[i] = 0;
 }
-
-// int     ft_strlen(const char *s)
-// {
-//     int i;
-
-//     i = 0;
-//     if (!s)
-//         return (i);
-//     while (s[i])
-//         i++;
-//     return (i);
-// }
 
 int     dollar_in_word(char *word)
 {
@@ -96,11 +83,13 @@ int     get_length_of_expansion(t_envs *env_list, char *expandable)
     return (0);
 }
 
-int     count_letters_till_next_quote(char *word, int quote_type, int *i)
+int     count_letters_till_next_quote(const char *word, int *i)
 {
     int letters;
+    int quote_type;
 
-    letters = 0;
+    quote_type = word[*i];
+    letters = 2;
     (*i)++;
     while (word[*i])
     {
@@ -131,7 +120,7 @@ int     get_full_len_of_expandable(char *expandable, t_envs *env_list)
         i += ft_strlen(mock_word);
         len += get_length_of_expansion(env_list, mock_word);
         if (check_for_quote(expandable[i], &quote_type))
-            len += count_letters_till_next_quote(expandable, quote_type, &i);
+            len += count_letters_till_next_quote(expandable, &i);
         i++;
     }
     return (len);
@@ -256,9 +245,6 @@ void    copy_from_real_environment_list(char *expandable, char *fully_expanded, 
     counter = 0;
     test_env = getenv(expandable);
     len = ft_strlen(test_env);
-    (fully_expanded[*index]) = test_env;
-    (*index) += len;
-    while (
 }
 
 char    *create_the_whole_word(char *expandable, t_envs *env_list, int token_type)

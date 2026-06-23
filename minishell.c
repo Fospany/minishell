@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/09 13:46:17 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/23 13:38:06 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ void    remove_quoted_word(char **split_line, t_token *tokens)
         {
             if (check_for_quote_without_quote_type(split_line[i][j]))
             {
+                tokens[i].quote_type = split_line[i][j];
                 split_line[i] = get_rid_of_quotes(split_line[i]);
                 tokens[i].value = split_line[i];
                 break ;
@@ -148,7 +149,7 @@ int minishell(const char *read_line)
     handle_expansions(my_env_list, tokens);
     while (split_line[i])
     {
-        printf("type: %i, value: %s\n", tokens[i].type, tokens[i].value);
+        printf("type: %i, value: %s, quote_type: %i\n", tokens[i].type, tokens[i].value, tokens[i].quote_type);
         i++;
     }
     if (syntax_check(tokens))
@@ -158,36 +159,7 @@ int minishell(const char *read_line)
 
 int main()
 {
-<<<<<<< HEAD
-    if (minishell("festek=fasz"))
-=======
-	char *path;
-	char *str;
-	char **av;
-	char  *tmp;
-	extern char **environ;
-	pid_t pid;
-
-	path = "/bin/";
-	tmp = path;
-	(void) tmp;
-	while ((str = readline("vibeshell: ")))
-	{
-		av = split_read_line(str);
-		tmp = ft_strjoin(path, av[0]);
-		pid = fork();
-		if (pid == 0)
-		{
-			execve(tmp, av, environ);
-			perror("execve");
-			exit(1);
-		}
-		waitpid(pid, NULL, 0);
-	}
-	if (!path)
-		return 0;
-    if (minishell("lofasz$$$festek"))
->>>>>>> 5e214f702be394f0ef45d2c898f21b1ddfe7cba4
+    if (minishell("okcso"))
         return (1);
     return (0);
 }

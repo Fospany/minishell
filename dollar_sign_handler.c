@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 17:33:26 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/09 12:59:33 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/23 10:16:07 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,4 +79,16 @@ int    dollar_sign_exception(const char *read_line, int *i, int *words)
         return (1);
     }
     return (0);
+}
+
+int     ft_strlen(const char *s)
+{
+    int i;
+
+    i = 0;
+    if (!s)
+        return (i);
+    while (s[i])
+        i++;
+    return (i);
 }

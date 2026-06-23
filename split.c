@@ -6,51 +6,108 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 14:02:51 by bguthy            #+#    #+#             */
-/*   Updated: 2026/06/03 17:16:24 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/23 13:33:28 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// char    *copy_till_next_word(const char *read_line, int *i)
+// {
+//     int     letters;
+//     int     local_index;
+//     char    *new_word;
+//     int     quote_type;
+    
+//     local_index = 0;
+//     quote_type = 0;
+//     letters = count_letters(read_line, *i);
+//     new_word = malloc(sizeof(char) * (letters + 1));
+//     if (!new_word)
+//         return (NULL);
+//     while (!is_white_space(read_line[*i]) && read_line[*i])
+//     {
+//         new_word[local_index++] = read_line[(*i)++];
+//         if (check_for_quote(read_line[*i], &quote_type))
+//             copy_till_next_quote(read_line, i, quote_type);
+//         if (is_heredoc_or_append(read_line[*i], read_line[(*i) + 1]) && local_index >= letters)
+//             break ;
+//         else if (local_index >= letters && is_redir_or_pipe(read_line[*i]) && (!is_redir_or_pipe(new_word[local_index - 1]) || is_redir_or_pipe(new_word[local_index - 1])))
+//             break ;
+//     }
+//     new_word[local_index] = 0;
+//     return (new_word);
+// }
+
+int     is_quote(const char letter)
+{
+    if (letter == SINGLE_QUOTE || letter == DOUBLE_QUOTE)
+        return (1);
+    return (0);
+}
+
+int     count_letters_till_next_word(const char *read_line, int i)
+{
+    int letters;
+    
+    letters = 0;
+    while (read_line[i])
+    {
+        if (is_quote(read_line[i]))
+            letters+= count_letters_till_next_quote(read_line, &i);
+        if (is_white_space(read_line[i]) || !read_line[i])
+            return (letters);
+        if (is_special_character(read_line, i, &letters))
+            return (letters);
+        i++;
+        letters++;
+    }
+    return (letters);
+}
+
 char    *copy_till_next_word(const char *read_line, int *i)
 {
-    int     letters;
-    int     local_index;
     char    *new_word;
+    int     local_index;
+    int     letters;
     
     local_index = 0;
-    letters = count_letters(read_line, *i);
+    letters = count_letters_till_next_word(read_line, *i);
     new_word = malloc(sizeof(char) * (letters + 1));
     if (!new_word)
         return (NULL);
-    while (!is_white_space(read_line[*i]) && read_line[*i])
+    while (!is_white_space(read_line[*i]) && read_line[(*i)])
     {
-        new_word[local_index++] = read_line[(*i)++];
-        if (check_for_quote_without_quote_type(read_line[*i]))
-            break ;
-        if (is_heredoc_or_append(read_line[*i], read_line[(*i) + 1]) && local_index >= letters)
-            break ;
-        else if (local_index >= letters && is_redir_or_pipe(read_line[*i]) && (!is_redir_or_pipe(new_word[local_index - 1]) || is_redir_or_pipe(new_word[local_index - 1])))
-            break ;
+        new_word[local_index] = read_line[(*i)];
+        if (is_quote(new_word[local_index]))
+            copy_till_next_quote(read_line, i, new_word, &local_index);
+        if ((is_heredoc_or_append(read_line[*i], read_line[(*i) + 1]) && local_index >= letters))
+             break ;
+         else if (local_index >= letters && is_redir_or_pipe(read_line[*i]) && (!is_redir_or_pipe(new_word[local_index - 1]) || is_redir_or_pipe(new_word[local_index - 1])))
+             break ;
+        local_index++;
+        (*i)++;
     }
     new_word[local_index] = 0;
     return (new_word);
 }
 
-char    *copy_till_next_quote(const char *read_line, int *i, int quote_type)
+void    copy_till_next_quote(const char *read_line, int *i, char *new_word, int *new_index)
 {
-    char    *new_word;
-    int     temp;
-    int     local_index;
+    int     quote_type;
 
-    local_index = 0;
-    temp = *i;
-    skip_to_next_quote(read_line, i, quote_type);
-    new_word = malloc(sizeof(char) * (*i - temp + 1));
-    while (temp < *i)
-        new_word[local_index++] = read_line[temp++];
-    new_word[local_index] = 0;
-    return (new_word);
+    quote_type = read_line[*i];
+    (*i)++;
+    (*new_index)++;
+    while (read_line[*i])
+    {
+        new_word[*new_index] = read_line[*i];
+        if ((new_word[*new_index]) == quote_type)
+            return ;
+        (*new_index)++;
+        (*i)++;
+    }
+    return ;
 }
 
 char    **allocating_double_pointer(const char *read_line)
@@ -75,8 +132,6 @@ void    fill_up_double_pointer(char **split_line, const char *read_line)
     while (read_line[i])
     {
         skip_white_spaces(read_line, &i);
-        if (check_for_quote(read_line[i], &quote_type))
-            split_line[w++] = copy_till_next_quote(read_line, &i, quote_type);
         if (!is_white_space(read_line[i]) && read_line[i])
             split_line[w++] = copy_till_next_word(read_line, &i);
         if (split_line[w - 1] == NULL)
