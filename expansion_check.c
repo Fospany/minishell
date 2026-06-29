@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:53:31 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/06/29 14:53:27 by rici             ###   ########.fr       */
+/*   Updated: 2026/06/29 18:27:42 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -345,7 +345,7 @@ void    handle_expansions(t_envs *env_list, t_token *tokens)
     i = 0;
     while (tokens[i].value)
     {
-        if (dollar_in_word(tokens[i].value))
+        if (dollar_in_word(tokens[i].value) && tokens[i].quote_type != SINGLE_QUOTE)
         {
             len = get_full_len_of_expandable(tokens[i], env_list);
             tokens[i].value = get_full_expandable_word(tokens[i], env_list, len);

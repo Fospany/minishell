@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/29 14:55:52 by rici             ###   ########.fr       */
+/*   Updated: 2026/06/29 18:30:13 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ void    remove_quoted_word(char **split_line, t_token *tokens)
         {
             if (check_for_quote_without_quote_type(split_line[i][j]))
             {
+                tokens[i].quote_type = split_line[i][j];
                 split_line[i] = get_rid_of_quotes(split_line[i]);
                 tokens[i].value = split_line[i];
                 break ;
@@ -148,7 +149,7 @@ int minishell(const char *read_line)
     handle_expansions(my_env_list, tokens);
     while (split_line[i])
     {
-        printf("type: %i, value: %s\n", tokens[i].type, tokens[i].value);
+        printf("type: %i, value: %s, quote_type: %i\n", tokens[i].type, tokens[i].value, tokens[i].quote_type);
         i++;
     }
     if (syntax_check(tokens))
@@ -158,7 +159,7 @@ int minishell(const char *read_line)
 
 int main()
 {
-    if (minishell("fasz | $FASZ$TERM"))
+    if (minishell("fasz=geci | $TERM '$fasz'"))
         return (0);
     return (1);
 }

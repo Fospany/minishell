@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/29 13:55:40 by rici             ###   ########.fr       */
+/*   Updated: 2026/06/29 18:27:44 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ typedef struct s_envs
 typedef struct s_token
 {
     char            *value;
+    int             quote_type;
     t_token_type    type;
 }                   t_token;
 
