@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/29 18:30:13 by rici             ###   ########.fr       */
+/*   Updated: 2026/06/29 21:05:54 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void get_real_quote_type(char *word, int *quote_type, int *i)
     }
 }
 
-char    *get_rid_of_quotes(char *word)
+char    *get_rid_of_quotes(char *word, t_token token)
 {
     int     i;
     int     quote_type;
@@ -95,6 +95,8 @@ char    *get_rid_of_quotes(char *word)
     while (word[i])
     {
         get_real_quote_type(word, &quote_type, &i);
+        if (is_dollar_sign(word[i]))
+            token.quote_type = quote_type;
         if (word[i] != quote_type && word[i])
         {
             new_word[local_index++] = word[i++];
@@ -120,8 +122,7 @@ void    remove_quoted_word(char **split_line, t_token *tokens)
         {
             if (check_for_quote_without_quote_type(split_line[i][j]))
             {
-                tokens[i].quote_type = split_line[i][j];
-                split_line[i] = get_rid_of_quotes(split_line[i]);
+                split_line[i] = get_rid_of_quotes(split_line[i], tokens[i]);
                 tokens[i].value = split_line[i];
                 break ;
             }
@@ -159,7 +160,7 @@ int minishell(const char *read_line)
 
 int main()
 {
-    if (minishell("fasz=geci | $TERM '$fasz'"))
+    if (minishell("'fasz'$TERM"))
         return (0);
     return (1);
 }
