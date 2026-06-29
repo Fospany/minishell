@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:53:31 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/06/28 16:54:18 by rici             ###   ########.fr       */
+/*   Updated: 2026/06/29 14:53:27 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,17 +27,17 @@ void    copy_till_next_dollar(char *dest, char *source)
     dest[i] = 0;
 }
 
-// int     ft_strlen(const char *s)
-// {
-//     int i;
+int     ft_strlen(const char *s)
+{
+    int i;
 
-//     i = 0;
-//     if (!s)
-//         return (i);
-//     while (s[i])
-//         i++;
-//     return (i);
-// }
+    i = 0;
+    if (!s)
+        return (i);
+    while (s[i])
+        i++;
+    return (i);
+}
 
 int     dollar_in_word(char *word)
 {
@@ -114,27 +114,27 @@ int     count_letters_till_next_quote(char *word, int quote_type, int *i)
     return (letters);
 }
 
-int     get_full_len_of_expandable(char *expandable, t_envs *env_list)
-{
-    char    *mock_word;
-    int     i;
-    int     len;
-    int     quote_type;
+// int     get_full_len_of_expandable(char *expandable, t_envs *env_list)
+// {
+//     char    *mock_word;
+//     int     i;
+//     int     len;
+//     int     quote_type;
 
-    quote_type = 0;
-    i = 0;
-    len = 0;
-    while (expandable[i])
-    {
-        mock_word = create_mock_word(expandable + i);
-        i += ft_strlen(mock_word);
-        len += get_length_of_expansion(env_list, mock_word);
-        if (check_for_quote(expandable[i], &quote_type))
-            len += count_letters_till_next_quote(expandable, quote_type, &i);
-        i++;
-    }
-    return (len);
-}
+//     quote_type = 0;
+//     i = 0;
+//     len = 0;
+//     while (expandable[i])
+//     {
+//         mock_word = create_mock_word(expandable + i);
+//         i += ft_strlen(mock_word);
+//         len += get_length_of_expansion(env_list, mock_word);
+//         if (check_for_quote(expandable[i], &quote_type))
+//             len += count_letters_till_next_quote(expandable, quote_type, &i);
+//         i++;
+//     }
+//     return (len);
+// }
 
 int     invalid_for_after_dollar(const char letter)
 {
@@ -246,49 +246,49 @@ int     check_in_real_environment_list(char *expandable)
     return (0);
 }
 
-char    *create_the_whole_word(char *expandable, t_envs *env_list, int token_type)
-{
-    int     i;
-    int     j;
-    int     quote_type;
-    char    *fully_expanded;
+// char    *create_the_whole_word(char *expandable, t_envs *env_list, int token_type)
+// {
+//     int     i;
+//     int     j;
+//     int     quote_type;
+//     char    *fully_expanded;
 
-    fully_expanded = malloc(sizeof(char) * (get_full_len_of_expandable(expandable, env_list) + 2));
-    quote_type = 0;
-    i = 0;
-    j = 0;
-    while (expandable[i])
-    {
-        if (is_dollar_sign(expandable[i]))
-        {
-            if (is_dollar_after_dollar(expandable[i + 1]))
-            {
-                handle_double_dollars(fully_expanded, &j);
-                i += 2;
-            }
-            else if (check_if_in_my_env_list(env_list, expandable + i))
-                i += copy_from_env_list(env_list, expandable  + i, fully_expanded, &j);
-            else if (check_in_real_environment_list(expandable + i))
-            {
-                copy_from_real_environment_list(expandable + i, fully_expanded, &j);
-            }
-            else
-            {
-                fully_expanded[j] = 0;
-                return (fully_expanded);
-            }
-        }
-        else if (check_for_quote(expandable[i], &quote_type))
-        {
-            i++;
-            i += copy_until_next_quote(expandable + i, fully_expanded, &j, &quote_type);
-        }
-        else
-            fully_expanded[j++] = expandable[i++];
-    }
-    fully_expanded[j] = 0;
-    return (fully_expanded);
-}
+//     fully_expanded = malloc(sizeof(char) * (get_full_len_of_expandable(expandable, env_list) + 2));
+//     quote_type = 0;
+//     i = 0;
+//     j = 0;
+//     while (expandable[i])
+//     {
+//         if (is_dollar_sign(expandable[i]))
+//         {
+//             if (is_dollar_after_dollar(expandable[i + 1]))
+//             {
+//                 handle_double_dollars(fully_expanded, &j);
+//                 i += 2;
+//             }
+//             else if (check_if_in_my_env_list(env_list, expandable + i))
+//                 i += copy_from_env_list(env_list, expandable  + i, fully_expanded, &j);
+//             else if (check_in_real_environment_list(expandable + i))
+//             {
+//                 copy_from_real_environment_list(expandable + i, fully_expanded, &j);
+//             }
+//             else
+//             {
+//                 fully_expanded[j] = 0;
+//                 return (fully_expanded);
+//             }
+//         }
+//         else if (check_for_quote(expandable[i], &quote_type))
+//         {
+//             i++;
+//             i += copy_until_next_quote(expandable + i, fully_expanded, &j, &quote_type);
+//         }
+//         else
+//             fully_expanded[j++] = expandable[i++];
+//     }
+//     fully_expanded[j] = 0;
+//     return (fully_expanded);
+// }
 
 char    *copy_till_equal_sign(char *expandable)
 {
@@ -340,19 +340,23 @@ char    *expand_env_assign(char *expandable, t_envs *env_list, int *index)
 void    handle_expansions(t_envs *env_list, t_token *tokens)
 {
     int i;
-
+    int len;
+    
     i = 0;
     while (tokens[i].value)
     {
         if (dollar_in_word(tokens[i].value))
-            tokens[i].value = create_the_whole_word(tokens[i].value, env_list, tokens[i].type);
+        {
+            len = get_full_len_of_expandable(tokens[i], env_list);
+            tokens[i].value = get_full_expandable_word(tokens[i], env_list, len);
+        }
         i++;
     }
 }
 
 int     is_valid_after_dollar_sign(const char letter)
 {
-    if (!is_number(letter) || !is_upper_case(letter) || !is_lower_case(letter) || !is_underline(letter))
+    if (!is_number(letter) && !is_upper_case(letter) && !is_lower_case(letter) && !is_underline(letter))
         return (0);
     return (1);
 }
@@ -417,7 +421,7 @@ int     count_valid_characters_after_dollar_sign(const char *curr_expandable)
 {
     int i;
 
-    i = 0;
+    i = 1;
     while (curr_expandable[i])
     {
         if (!is_valid_after_dollar_sign(curr_expandable[i]))
@@ -427,17 +431,49 @@ int     count_valid_characters_after_dollar_sign(const char *curr_expandable)
     return (i);
 }
 
+void	*ft_memset(void *s, int c, size_t n)
+{
+	unsigned char	*str;
+
+	str = (unsigned char *)s;
+	while (n--)
+		*str++ = c;
+	return (s);
+}
+
+void	*ft_calloc(size_t nmemb, size_t size)
+{
+	void	*ptr;
+
+	if (nmemb == 0 || size == 0)
+	{
+		ptr = malloc(0);
+		if (!ptr)
+			return (NULL);
+		return (ptr);
+	}
+	if (nmemb > (size_t)-1 / size)
+		return (NULL);
+	ptr = malloc(nmemb * size);
+	if (!ptr)
+		return (NULL);
+	ft_memset(ptr, 0, nmemb * size);
+	return (ptr);
+}
+
 int     get_full_len_of_expandable(t_token curr_token, t_envs *env_list)
 {
     int     i;
     int     len;
 
+    i = 0;
+    len = 0;
     while (curr_token.value[i])
     {
         if (is_dollar_sign(curr_token.value[i]))
         {
             len += get_len_of_current_expandable(&curr_token.value[i + 1], env_list);
-            i += count_valid_characters_after_dollar_sign(&curr_token.value[i + 1]);
+            i += count_valid_characters_after_dollar_sign(&curr_token.value[i]);
         }
         else
         {
@@ -446,4 +482,59 @@ int     get_full_len_of_expandable(t_token curr_token, t_envs *env_list)
         }
     }
     return (len);
+}
+
+void    cat_to_fully_expanded(char *fully_expanded, const char new_letter)
+{
+    int index;
+
+    index = ft_strlen(fully_expanded);
+    fully_expanded[index] = new_letter;
+}
+
+void    make_expansion(char *fully_expnaded, const char *mock_expand, int *i, t_envs *env_list)
+{
+    int     expand_index;
+    char    *test_env;
+    int     env_index;
+
+    env_index = 0;
+    expand_index = ft_strlen(fully_expnaded);
+    (*i) += (ft_strlen(mock_expand) + 1);
+    test_env = getenv(mock_expand);
+    if (!test_env)
+        test_env = get_from_my_env_list(mock_expand, env_list);
+    if (test_env)
+    {
+        while (test_env[env_index])
+        {
+            fully_expnaded[expand_index] = test_env[env_index];
+            expand_index++;
+            env_index++;
+        }
+    }
+}
+
+char    *get_full_expandable_word(t_token curr_token, t_envs *env_list, int len)
+{
+    char    *fully_expanded;
+    char    *mock_expand;
+    int i;
+
+    i = 0;
+    fully_expanded = ft_calloc(sizeof(char), (len + 1));
+    if (!fully_expanded)
+        return (NULL);
+    while (curr_token.value[i])
+    {
+        if (is_dollar_sign(curr_token.value[i]))
+        {
+            mock_expand = get_valid_expandable(curr_token.value + i + 1);
+            make_expansion(fully_expanded, mock_expand, &i, env_list);
+        }
+        else
+            cat_to_fully_expanded(fully_expanded, curr_token.value[i++]);
+    }
+    fully_expanded[len] = 0;
+    return (fully_expanded);
 }

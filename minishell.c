@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/09 13:46:17 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/29 14:55:52 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,42 +152,13 @@ int minishell(const char *read_line)
         i++;
     }
     if (syntax_check(tokens))
-        return (1);
-    return (0);
+        return (0);
+    return (1);
 }
 
 int main()
 {
-<<<<<<< HEAD
-    if (minishell("festek=fasz"))
-=======
-	char *path;
-	char *str;
-	char **av;
-	char  *tmp;
-	extern char **environ;
-	pid_t pid;
-
-	path = "/bin/";
-	tmp = path;
-	(void) tmp;
-	while ((str = readline("vibeshell: ")))
-	{
-		av = split_read_line(str);
-		tmp = ft_strjoin(path, av[0]);
-		pid = fork();
-		if (pid == 0)
-		{
-			execve(tmp, av, environ);
-			perror("execve");
-			exit(1);
-		}
-		waitpid(pid, NULL, 0);
-	}
-	if (!path)
-		return 0;
-    if (minishell("lofasz$$$festek"))
->>>>>>> 5e214f702be394f0ef45d2c898f21b1ddfe7cba4
-        return (1);
-    return (0);
+    if (minishell("fasz | $FASZ$TERM"))
+        return (0);
+    return (1);
 }

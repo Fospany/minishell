@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/04 16:03:56 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/29 13:55:40 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,9 @@
 # include <string.h>
 # include <errno.h>
 # include <sys/types.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-# include "libft/libft.h"
+// # include <readline/readline.h>
+// # include <readline/history.h>
+// # include "libft/libft.h"
 
 
 typedef enum e_token_type
@@ -62,7 +62,8 @@ typedef struct s_token
     t_token_type    type;
 }                   t_token;
 
-int     string_compare(char *string1, char *string2);
+void    *ft_calloc(size_t nmemb, size_t size);
+int     string_compare(const char *string1, const char *string2);
 int     other_letters_check(char c);
 int     first_letter_check(char letter);
 int     is_number(char letter);
@@ -92,7 +93,7 @@ int     is_redir_or_pipe(const char letter);
 int     quote_in_word(const char *read_line, int *i, int *words);
 int     syntax_error_message_display(char *token_value);
 int     is_dollar_sign(const char letter);
-// int     ft_strlen(const char *s);
+int     ft_strlen(const char *s);
 int     is_pipe(const char letter);
 int     syntax_check(t_token *tokens);
 int     skip_to_next_dollar_sign(char *expandable);
@@ -120,6 +121,8 @@ int     is_underline(char letter);
 int     is_white_space_or_special_character(const char letter);
 int     key_counter(const char *envp);
 char    *expand_env_assign(char *expandable, t_envs *env_list, int *index);
+char    *get_full_expandable_word(t_token curr_token, t_envs *env_list, int len);
+int     get_full_len_of_expandable(t_token curr_token, t_envs *env_list);
 
 
 #endif
