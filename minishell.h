@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/29 18:27:44 by rici             ###   ########.fr       */
+/*   Updated: 2026/06/30 11:51:25 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,7 @@ int     key_counter(const char *envp);
 char    *expand_env_assign(char *expandable, t_envs *env_list, int *index);
 char    *get_full_expandable_word(t_token curr_token, t_envs *env_list, int len);
 int     get_full_len_of_expandable(t_token curr_token, t_envs *env_list);
+int     digit_counter(pid_t pid);
 
 
 #endif
