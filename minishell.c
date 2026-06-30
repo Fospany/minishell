@@ -3,22 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/03 19:36:41 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/29 21:05:54 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-// #include "env_assign_helpers.c"
-// #include "rest_helpers.c"
-// #include "split_helpers.c"
-// #include "split.c"
-// #include "stepping_in_input.c"
-// #include "syntax_error_check.c"
-// #include "expansion_check.c"
-// #include "environment_creation.c"
+#include "env_assign_helpers.c"
+#include "rest_helpers.c"
+#include "split_helpers.c"
+#include "split.c"
+#include "stepping_in_input.c"
+#include "syntax_error_check.c"
+#include "expansion_check.c"
+#include "environment_creation.c"
+#include "skippers.c"
+#include "tokenizing.c"
+#include "env_assign.c"
+#include "dollar_sign_handler.c"
+#include "is_special_character.c"
+#include "special_characters_checkers.c"
+#include "word_count_helpers.c"
 
 int determine_quote_type(char letter, int quote_type)
 {
@@ -72,7 +79,7 @@ void get_real_quote_type(char *word, int *quote_type, int *i)
     }
 }
 
-char    *get_rid_of_quotes(char *word)
+char    *get_rid_of_quotes(char *word, t_token token)
 {
     int     i;
     int     quote_type;
@@ -88,6 +95,8 @@ char    *get_rid_of_quotes(char *word)
     while (word[i])
     {
         get_real_quote_type(word, &quote_type, &i);
+        if (is_dollar_sign(word[i]))
+            token.quote_type = quote_type;
         if (word[i] != quote_type && word[i])
         {
             new_word[local_index++] = word[i++];
@@ -113,7 +122,7 @@ void    remove_quoted_word(char **split_line, t_token *tokens)
         {
             if (check_for_quote_without_quote_type(split_line[i][j]))
             {
-                split_line[i] = get_rid_of_quotes(split_line[i]);
+                split_line[i] = get_rid_of_quotes(split_line[i], tokens[i]);
                 tokens[i].value = split_line[i];
                 break ;
             }
@@ -141,42 +150,17 @@ int minishell(const char *read_line)
     handle_expansions(my_env_list, tokens);
     while (split_line[i])
     {
-        printf("type: %i, value: %s\n", tokens[i].type, tokens[i].value);
+        printf("type: %i, value: %s, quote_type: %i\n", tokens[i].type, tokens[i].value, tokens[i].quote_type);
         i++;
     }
     if (syntax_check(tokens))
-        return (1);
-    return (0);
+        return (0);
+    return (1);
 }
 
 int main()
 {
-	char *path;
-	char *str;
-	char **av;
-	char  *tmp;
-	extern char **environ;
-	pid_t pid;
-
-	path = "/bin/";
-	tmp = path;
-	while ((str = readline("vibeshell: ")))
-	{
-		av = split_read_line(str);
-		tmp = ft_strjoin(path, av[0]);
-		pid = fork();
-		if (pid == 0)
-		{
-			execve(tmp, av, environ);
-			perror("execve");
-			exit(1);
-		}
-		waitpid(pid, NULL, 0);
-		//free arguments of av
-	}
-	if (!path)
-		return 0;
-    if (minishell("lofasz$$$festek"))
-        return (1);
-    return (0);
+    if (minishell("'fasz'$TERM"))
+        return (0);
+    return (1);
 }

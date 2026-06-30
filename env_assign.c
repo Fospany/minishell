@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 17:42:45 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/03 17:43:33 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/04 15:09:32 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,18 @@
 int equal_sign_check(char *string)
 {
     int i;
+    int equal_signs;
     
+    equal_signs = 0;
     i = 0;
     while (string[i])
     {
         if (string[i] == EQUAL_SIGN)
-            return (1);
+            equal_signs++;
         i++;
     }
+    if (equal_signs == 1)
+        return (1);
     return (0);
 }
 
@@ -53,7 +57,7 @@ int first_letter_check(char letter)
 
 int other_letters_check(char c)
 {
-    if ((first_letter_check(c) || is_number(c)) && c != EQUAL_SIGN)
+    if (first_letter_check(c) || is_number(c) || c == EQUAL_SIGN)
         return (1);
     return (0);
 }

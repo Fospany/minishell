@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   rest_helpers.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/22 10:26:24 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/22 10:26:33 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/29 13:25:05 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int string_compare(char *string1, char *string2)
+int string_compare(const char *string1, const char *string2)
 {
     int i;
     
     i = 0;
-    while (string1[i] || string2[i])
+    while (string1[i] && string2[i])
     {
         if (string1[i] != string2[i])
             return (0);

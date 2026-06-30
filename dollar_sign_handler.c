@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 17:33:26 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/03 19:31:58 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/09 12:59:33 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,11 @@ int    dollar_sign_exception(const char *read_line, int *i, int *words)
 {
     if (is_dollar_sign(read_line[*i]))
     {
-        if (dollar_is_standing_alone(read_line[(*i) + 1]))
+        if (is_dollar_after_dollar(read_line[(*i) + 1]))
+        {
+            (*i) += 2;
+        }
+        else if (dollar_is_standing_alone(read_line[(*i) + 1]))
         {
             (*words)++;
             (*i) += 2;
