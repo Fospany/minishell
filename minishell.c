@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/30 12:36:28 by rici             ###   ########.fr       */
+/*   Updated: 2026/06/30 12:54:38 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,11 +133,46 @@ void    remove_quoted_word(char **split_line, t_token *tokens)
     }
 }
 
-t_token *minishell(const char *read_line, t_envs *env_list)
+int     number_of_valid_tokens(t_token *tokens)
+{
+    int i;
+    int valid_tokens;
+
+    valid_tokens = 0;
+    i = 0;
+    while (tokens[i].value)
+    {
+        if (tokens[i].type != 6)
+            valid_tokens++;
+        i++;
+    }
+    return (valid_tokens);
+}
+
+char    **convert_struct_to_double_string(t_token *tokens)
+{
+    int     i;
+    int     words;
+    char    **converted;
+
+    i = 0;
+    words = 0;
+    converted = malloc(sizeof(char *) * (number_of_valid_tokens(tokens) + 1));
+    while (tokens[i].value)
+    {
+        if (tokens[i].type != 6)
+            converted[words++] = tokens[i].value;
+        i++;
+    }
+    converted[words] = NULL;
+    return (converted);
+}
+char    **minishell(const char *read_line, t_envs *env_list)
 {
     int     i;
     t_token *tokens;
     char    **split_line;
+    char    **converted;
 
     i = 0;
     split_line = split_read_line(read_line);
@@ -155,15 +190,18 @@ t_token *minishell(const char *read_line, t_envs *env_list)
     }
     if (syntax_check(tokens))
         return (NULL);
-    return (tokens);
+    converted = convert_struct_to_double_string(tokens);
+    return (converted);
 }
 
 int main()
 {
-    t_envs *global_env_list;
+    char    **okcso;
+    t_envs  *global_env_list;
 
     global_env_list = NULL;
-    if (minishell("okcso $$here", global_env_list))
-        return (0);
-    return (1);
+    okcso = minishell("okcso $$here", global_env_list);
+    if (!okcso)
+        return (1);
+    return (0);
 }

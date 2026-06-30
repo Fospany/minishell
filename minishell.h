@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/30 11:51:25 by rici             ###   ########.fr       */
+/*   Updated: 2026/06/30 12:53:45 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ int     env_assign_check(char *string);
 void    remove_quoted_word(char **split_line, t_token *tokens);
 int     check_for_quote_without_quote_type(const char letter);
 void    get_real_quote_type(char *word, int *quote_type, int *i);
-t_envs  *env_list_creation(t_token *tokens);
+t_envs  *env_list_addition(t_token *tokens, t_envs *env_list);
 int     dollar_sign_exception(const char *read_line, int *i, int *words);
 int     is_heredoc_or_append(const char letter1, const char letter2);
 int     is_special_character(const char *read_line, int i, int *letters);
