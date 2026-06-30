@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:53:31 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/06/29 18:27:42 by rici             ###   ########.fr       */
+/*   Updated: 2026/06/30 12:38:45 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,6 +198,16 @@ int     copy_until_next_quote(const char *expandable, char *fully_expanded, int 
     return (i);
 }
 
+int     get_pid_len()
+{
+    pid_t   pid;
+    int     len;
+
+    pid = getpid();
+    len = digit_counter(pid);
+    return (len);
+}
+
 int     digit_counter(pid_t pid)
 {
     int digits;
@@ -211,11 +221,13 @@ int     digit_counter(pid_t pid)
     return (digits);
 }
 
-char    *my_itoa(pid_t pid)
+char    *convert_pid_to_string()
 {
+    pid_t   pid;
     int     digits;
     char    *pid_string;
 
+    pid = getpid();
     pid = (int)pid;
     digits = digit_counter(pid);
     pid_string = malloc(sizeof(char) * (digits + 1));
@@ -228,16 +240,16 @@ char    *my_itoa(pid_t pid)
     return (pid_string);
 }
 
-void    handle_double_dollars(char *fully_expanded, int *index)
-{
-    char    *pid;
-    int     i;
+// void    handle_double_dollars(char *fully_expanded, int *index)
+// {
+//     char    *pid;
+//     int     i;
 
-    i = 0;
-    pid = my_itoa(getpid());
-    while (pid[i])
-        fully_expanded[(*index)++] = pid[i++];
-}
+//     i = 0;
+//     pid = my_itoa(getpid());
+//     while (pid[i])
+//         fully_expanded[(*index)++] = pid[i++];
+// }
 
 int     check_in_real_environment_list(char *expandable)
 {
@@ -343,6 +355,7 @@ void    handle_expansions(t_envs *env_list, t_token *tokens)
     int len;
     
     i = 0;
+    len = 0;
     while (tokens[i].value)
     {
         if (dollar_in_word(tokens[i].value) && tokens[i].quote_type != SINGLE_QUOTE)
@@ -368,6 +381,12 @@ int     get_len_of_valid_expandable(const char *expandable)
     len = 0;
     while (expandable[len])
     {
+    
+        if (is_dollar_sign(expandable[len]))
+        {
+            len++;
+            break ;
+        }
         if (!is_valid_after_dollar_sign(expandable[len]))
             break ;
         len++;
@@ -395,7 +414,7 @@ char    *get_valid_expandable(const char *expandable)
 
 char    *get_from_my_env_list(const char *expandable, t_envs *env_list)
 {
-    while (env_list->key)
+    while (env_list && env_list->key)
     {
         if (string_compare(expandable, env_list->key))
             return (env_list->value);
@@ -407,14 +426,14 @@ int     get_len_of_current_expandable(const char *expandable, t_envs *env_list)
 {
     char    *test_env;
     char    *real_env;
-    int     len;
 
     test_env = get_valid_expandable(expandable);
     real_env = getenv(test_env);
     if (!real_env)
         real_env = get_from_my_env_list(test_env, env_list);
-    len = ft_strlen(real_env);
-    return (len);
+    if (string_compare(test_env, "$"))
+        return (get_pid_len());
+    return (ft_strlen(real_env));
 }
 
 int     count_valid_characters_after_dollar_sign(const char *curr_expandable)
@@ -424,6 +443,11 @@ int     count_valid_characters_after_dollar_sign(const char *curr_expandable)
     i = 1;
     while (curr_expandable[i])
     {
+        if (is_dollar_sign(curr_expandable[i]))
+        {
+            i++;
+            break ;
+        }
         if (!is_valid_after_dollar_sign(curr_expandable[i]))
             break ;
         i++;
@@ -504,6 +528,8 @@ void    make_expansion(char *fully_expnaded, const char *mock_expand, int *i, t_
     test_env = getenv(mock_expand);
     if (!test_env)
         test_env = get_from_my_env_list(mock_expand, env_list);
+    if (string_compare(mock_expand, "$"))
+        test_env = convert_pid_to_string();
     if (test_env)
     {
         while (test_env[env_index])

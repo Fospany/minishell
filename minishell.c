@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/29 21:05:54 by rici             ###   ########.fr       */
+/*   Updated: 2026/06/30 12:36:28 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,11 +133,10 @@ void    remove_quoted_word(char **split_line, t_token *tokens)
     }
 }
 
-int minishell(const char *read_line)
+t_token *minishell(const char *read_line, t_envs *env_list)
 {
     int     i;
     t_token *tokens;
-    t_envs  *my_env_list;
     char    **split_line;
 
     i = 0;
@@ -145,22 +144,26 @@ int minishell(const char *read_line)
     printf("%i\n", word_counter(read_line));
     tokens = malloc(sizeof(t_token) * (word_counter(read_line) + 1));
     create_token_struct(tokens, split_line);
-    my_env_list = env_list_creation(tokens);
+    env_list = env_list_addition(tokens, env_list);
     remove_quoted_word(split_line, tokens);
-    handle_expansions(my_env_list, tokens);
+    printf("GECI\n");
+    handle_expansions(env_list, tokens);
     while (split_line[i])
     {
         printf("type: %i, value: %s, quote_type: %i\n", tokens[i].type, tokens[i].value, tokens[i].quote_type);
         i++;
     }
     if (syntax_check(tokens))
-        return (0);
-    return (1);
+        return (NULL);
+    return (tokens);
 }
 
 int main()
 {
-    if (minishell("'fasz'$TERM"))
+    t_envs *global_env_list;
+
+    global_env_list = NULL;
+    if (minishell("okcso $$here", global_env_list))
         return (0);
     return (1);
 }
