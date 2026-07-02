@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 17:13:55 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/23 10:20:07 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/07/02 13:32:02 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ void    create_token_struct(t_token *tokens, char **line)
     {
         tokens[i].quote_type = 0;
         tokens[i].value = line[i];
+        tokens[i].quote_type = 0;
         tokens[i].type = tokenizer(line[i]);
         i++;
     }

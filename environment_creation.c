@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   environment_creation.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 11:41:39 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/06/09 13:48:11 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/30 12:38:05 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int     number_of_env_variables(t_token *tokens)
+int     number_of_env_variables(t_token *tokens, t_envs *env_list)
 {
     int i;
     int env_variables;
@@ -23,6 +23,14 @@ int     number_of_env_variables(t_token *tokens)
     {
         if (tokens[i].type == token_env_assign)
             env_variables++;
+        i++;
+    }
+    i = 0;
+    if (!env_list)
+        return (env_variables);
+    while (env_list[i].key)
+    {
+        env_variables++;
         i++;
     }
     return (env_variables);
@@ -75,7 +83,7 @@ t_envs  copy_from_token_list(t_token tokens)
     return (new_node);
 }
 
-void    fill_up_env_list(t_envs *env_list, t_token *tokens)
+void    fill_up_env_list(t_envs *new_env_list, t_token *tokens, t_envs *prev_env_list)
 {
     int i;
     int j;
@@ -83,24 +91,30 @@ void    fill_up_env_list(t_envs *env_list, t_token *tokens)
     i = 0;
     j = 0;
 
+    while (prev_env_list && prev_env_list[i].key)
+    {
+        new_env_list[i].key = prev_env_list[i].key;
+        new_env_list[i].value = prev_env_list[i].value;
+        i++;
+    }
     while (tokens[j].value != NULL)
     {
         if (tokens[j].type == token_env_assign)
-            env_list[i++] = copy_from_token_list(tokens[j++]);
+            new_env_list[i++] = copy_from_token_list(tokens[j++]);
         else
             j++;
     }
-    env_list[i].key = NULL;
-    env_list[i].value = NULL;
+    new_env_list[i].key = NULL;
+    new_env_list[i].value = NULL;
 }
 
-t_envs    *env_list_creation(t_token *tokens)
+t_envs    *env_list_addition(t_token *tokens, t_envs *env_list)
 {
-    t_envs *env_list;
+    t_envs *new_full_env_list;
 
-    env_list = malloc(sizeof(t_envs) * (number_of_env_variables(tokens) + 1));
-    if (!env_list)
+    new_full_env_list = malloc(sizeof(t_envs) * (number_of_env_variables(tokens, env_list) + 1));
+    if (!new_full_env_list)
         return (NULL);
-    fill_up_env_list(env_list, tokens);
+    fill_up_env_list(new_full_env_list, tokens, env_list);
     return (env_list);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/23 13:15:33 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/30 12:53:45 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,9 @@
 # include <string.h>
 # include <errno.h>
 # include <sys/types.h>
-//# include "libft/libft.h"
+// # include <readline/readline.h>
+// # include <readline/history.h>
+// # include "libft/libft.h"
 
 
 typedef enum e_token_type
@@ -61,7 +63,8 @@ typedef struct s_token
     t_token_type    type;
 }                   t_token;
 
-int     string_compare(char *string1, char *string2);
+void    *ft_calloc(size_t nmemb, size_t size);
+int     string_compare(const char *string1, const char *string2);
 int     other_letters_check(char c);
 int     first_letter_check(char letter);
 int     is_number(char letter);
@@ -83,7 +86,7 @@ int     env_assign_check(char *string);
 void    remove_quoted_word(char **split_line, t_token *tokens);
 int     check_for_quote_without_quote_type(const char letter);
 void    get_real_quote_type(char *word, int *quote_type, int *i);
-t_envs  *env_list_creation(t_token *tokens);
+t_envs  *env_list_addition(t_token *tokens, t_envs *env_list);
 int     dollar_sign_exception(const char *read_line, int *i, int *words);
 int     is_heredoc_or_append(const char letter1, const char letter2);
 int     is_special_character(const char *read_line, int i, int *letters);
@@ -91,6 +94,7 @@ int     is_redir_or_pipe(const char letter);
 int     quote_in_word(const char *read_line, int *i, int *words);
 int     syntax_error_message_display(char *token_value);
 int     is_dollar_sign(const char letter);
+int     ft_strlen(const char *s);
 int     is_pipe(const char letter);
 int     syntax_check(t_token *tokens);
 int     skip_to_next_dollar_sign(char *expandable);
@@ -117,9 +121,10 @@ int     letter_after_dollar_is_num_or_astrisk(const char letter);
 int     is_underline(char letter);
 int     is_white_space_or_special_character(const char letter);
 int     key_counter(const char *envp);
-int     ft_strlen(const char *s);
 char    *expand_env_assign(char *expandable, t_envs *env_list, int *index);
-void    copy_till_next_quote(const char *read_line, int *i, char *new_word, int *new_index);
-int     count_letters_till_next_quote(const char *word, int *i);
+char    *get_full_expandable_word(t_token curr_token, t_envs *env_list, int len);
+int     get_full_len_of_expandable(t_token curr_token, t_envs *env_list);
+int     digit_counter(pid_t pid);
+
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/23 13:38:06 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/06/30 12:54:38 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void get_real_quote_type(char *word, int *quote_type, int *i)
     }
 }
 
-char    *get_rid_of_quotes(char *word)
+char    *get_rid_of_quotes(char *word, t_token token)
 {
     int     i;
     int     quote_type;
@@ -95,6 +95,8 @@ char    *get_rid_of_quotes(char *word)
     while (word[i])
     {
         get_real_quote_type(word, &quote_type, &i);
+        if (is_dollar_sign(word[i]))
+            token.quote_type = quote_type;
         if (word[i] != quote_type && word[i])
         {
             new_word[local_index++] = word[i++];
@@ -120,8 +122,7 @@ void    remove_quoted_word(char **split_line, t_token *tokens)
         {
             if (check_for_quote_without_quote_type(split_line[i][j]))
             {
-                tokens[i].quote_type = split_line[i][j];
-                split_line[i] = get_rid_of_quotes(split_line[i]);
+                split_line[i] = get_rid_of_quotes(split_line[i], tokens[i]);
                 tokens[i].value = split_line[i];
                 break ;
             }
@@ -132,34 +133,75 @@ void    remove_quoted_word(char **split_line, t_token *tokens)
     }
 }
 
-int minishell(const char *read_line)
+int     number_of_valid_tokens(t_token *tokens)
+{
+    int i;
+    int valid_tokens;
+
+    valid_tokens = 0;
+    i = 0;
+    while (tokens[i].value)
+    {
+        if (tokens[i].type != 6)
+            valid_tokens++;
+        i++;
+    }
+    return (valid_tokens);
+}
+
+char    **convert_struct_to_double_string(t_token *tokens)
+{
+    int     i;
+    int     words;
+    char    **converted;
+
+    i = 0;
+    words = 0;
+    converted = malloc(sizeof(char *) * (number_of_valid_tokens(tokens) + 1));
+    while (tokens[i].value)
+    {
+        if (tokens[i].type != 6)
+            converted[words++] = tokens[i].value;
+        i++;
+    }
+    converted[words] = NULL;
+    return (converted);
+}
+char    **minishell(const char *read_line, t_envs *env_list)
 {
     int     i;
     t_token *tokens;
-    t_envs  *my_env_list;
     char    **split_line;
+    char    **converted;
 
     i = 0;
     split_line = split_read_line(read_line);
     printf("%i\n", word_counter(read_line));
     tokens = malloc(sizeof(t_token) * (word_counter(read_line) + 1));
     create_token_struct(tokens, split_line);
-    my_env_list = env_list_creation(tokens);
+    env_list = env_list_addition(tokens, env_list);
     remove_quoted_word(split_line, tokens);
-    handle_expansions(my_env_list, tokens);
+    printf("GECI\n");
+    handle_expansions(env_list, tokens);
     while (split_line[i])
     {
         printf("type: %i, value: %s, quote_type: %i\n", tokens[i].type, tokens[i].value, tokens[i].quote_type);
         i++;
     }
     if (syntax_check(tokens))
-        return (1);
-    return (0);
+        return (NULL);
+    converted = convert_struct_to_double_string(tokens);
+    return (converted);
 }
 
 int main()
 {
-    if (minishell("okcso"))
+    char    **okcso;
+    t_envs  *global_env_list;
+
+    global_env_list = NULL;
+    okcso = minishell("okcso $$here", global_env_list);
+    if (!okcso)
         return (1);
     return (0);
 }
