@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:53:31 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/06/30 12:38:45 by rici             ###   ########.fr       */
+/*   Updated: 2026/07/06 15:34:12 by rici             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -382,7 +382,7 @@ int     get_len_of_valid_expandable(const char *expandable)
     while (expandable[len])
     {
     
-        if (is_dollar_sign(expandable[len]))
+        if (is_dollar_sign(expandable[1]))
         {
             len++;
             break ;
@@ -443,7 +443,7 @@ int     count_valid_characters_after_dollar_sign(const char *curr_expandable)
     i = 1;
     while (curr_expandable[i])
     {
-        if (is_dollar_sign(curr_expandable[i]))
+        if (is_dollar_sign(curr_expandable[i]) && is_dollar_sign(curr_expandable[i + 1]))
         {
             i++;
             break ;
