@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_helpers.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 21:09:28 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/29 18:32:45 by rici             ###   ########.fr       */
+/*   Updated: 2026/07/07 15:48:03 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ int word_counter(const char *read_line)
 {
     int i;
     int words;
+    
     words = 0;
     i = 0;
     while (read_line[i])
@@ -64,6 +65,8 @@ int word_counter(const char *read_line)
         if (read_line[i] && is_word_2(read_line, &i, &words))
             words++;
     }
+    if (words == 0 && i > 0)
+        words++;
     return (words);
 }
 

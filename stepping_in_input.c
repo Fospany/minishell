@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   stepping_in_input.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 20:34:44 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/03 19:14:59 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/07/09 10:38:37 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,14 @@ int     is_white_space_or_special_character(const char letter)
     return (0);
 }
 
-int     solo_standing_special_character(const char *read_line, int *i, int *words)
+int     solo_standing_special_character(const char *read_line, int *i)
 {
     if (is_pipe(read_line[*i]) && check_for_pipe(read_line, i))
-        return ((*words)++, 1);
+        return (1);
     else if (is_redir_in(read_line[*i]) && check_for_redirect_in_and_heredoc(read_line, i))
-        return ((*words)++, 1);
+        return (1);
     else if (is_redir_out(read_line[*i])&& check_for_redirect_out_and_append(read_line, i))
-        return ((*words)++, 1);
+        return (1);
     return (0);
 }
 
@@ -60,15 +60,15 @@ int     is_redir(const char letter)
 
 int     check_for_special_character(const char *read_line, int *i, int *words)
 {
-    if (is_pipe(read_line[*i]) && !is_redir_or_pipe(read_line[(*i) - 1]))
+    if (is_pipe(read_line[*i]) && !is_redir_or_pipe(read_line[(*i) - 1]) && *i > 0)
         return ((*words) += 2, (*i)++, 1);
     else if (is_pipe(read_line[*i]))
         return ((*words)++, (*i)++, 1);
-    else if (is_heredoc_or_append(read_line[*i], read_line[(*i) + 1]) && !is_redir_or_pipe(read_line[(*i) - 1]))
+    else if (is_heredoc_or_append(read_line[*i], read_line[(*i) + 1]) && !is_redir_or_pipe(read_line[(*i) - 1]) && *i > 0)
         return ((*words) += 2, (*i) += 2, 1);
     else if (is_heredoc_or_append(read_line[*i], read_line[(*i) + 1]))
         return ((*words)++, (*i) += 2, 1);
-    else if (is_redir(read_line[*i]) && !is_redir_or_pipe(read_line[(*i) - 1]))
+    else if (is_redir(read_line[*i]) && !is_redir_or_pipe(read_line[(*i) - 1]) && *i > 0)
         return ((*words) += 2, (*i)++, 1);
     else if (is_redir(read_line[*i]))
         return ((*words)++, (*i)++, 1);
@@ -80,8 +80,8 @@ int     is_word_2(const char *read_line, int *i, int *words)
 {
     while (!is_white_space(read_line[*i]) && read_line[*i])
     {
-        if (solo_standing_special_character(read_line, i, words))
-            return (0);
+        if (solo_standing_special_character(read_line, i))
+            return (1);
         else if (dollar_sign_exception(read_line, i, words))
             return (0);
         else if (quote_in_word(read_line, i, words))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizing.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 17:13:55 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/29 18:27:59 by rici             ###   ########.fr       */
+/*   Updated: 2026/07/07 15:45:32 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,6 @@ void    create_token_struct(t_token *tokens, char **line)
         i++;
     }
     tokens[i].value = NULL;
+    tokens[i].quote_type = -1;
     tokens[i].type = -1;
 }

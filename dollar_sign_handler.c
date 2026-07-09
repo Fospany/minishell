@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   dollar_sign_handler.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 17:33:26 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/09 12:59:33 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/07/09 16:03:35 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ void    process_after_dollar_sign(const char *read_line, int *i, int *words)
         }
         (*i)++;
     }
-    (*words)++;
 }
 
 int     is_dollar_sign(const char letter)
@@ -70,12 +69,15 @@ int    dollar_sign_exception(const char *read_line, int *i, int *words)
         else if (dollar_is_standing_alone(read_line[(*i) + 1]))
         {
             (*words)++;
-            (*i) += 2;
+            (*i)++;
+            return (1);
         }
         else if (letter_after_dollar_is_num_or_astrisk(read_line[(*i) + 1]))
             (*i) += 2;
         else
             process_after_dollar_sign(read_line, i, words);
+        if (is_end(read_line[*i]))
+            (*words)++;
         return (1);
     }
     return (0);

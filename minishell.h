@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/30 12:53:45 by rici             ###   ########.fr       */
+/*   Updated: 2026/07/09 15:57:25 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,9 +98,6 @@ int     ft_strlen(const char *s);
 int     is_pipe(const char letter);
 int     syntax_check(t_token *tokens);
 int     skip_to_next_dollar_sign(char *expandable);
-void    copy_till_next_dollar(char *dest, char *source);
-int     copy_from_env_list(t_envs *env_list, char *expandable, char *fuly_expanded, int *index);
-int     count_letters_in_expansion(char *expandable);
 int     tokenizer(char *input);
 void    create_token_struct(t_token *tokens, char **line);
 int     equal_sign_check(char *string);
@@ -121,10 +118,10 @@ int     letter_after_dollar_is_num_or_astrisk(const char letter);
 int     is_underline(char letter);
 int     is_white_space_or_special_character(const char letter);
 int     key_counter(const char *envp);
-char    *expand_env_assign(char *expandable, t_envs *env_list, int *index);
 char    *get_full_expandable_word(t_token curr_token, t_envs *env_list, int len);
 int     get_full_len_of_expandable(t_token curr_token, t_envs *env_list);
 int     digit_counter(pid_t pid);
+int     is_end(const char letter);
 
 
 #endif

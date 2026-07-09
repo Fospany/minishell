@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/07/06 15:34:41 by rici             ###   ########.fr       */
+/*   Updated: 2026/07/09 16:00:39 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,7 +199,7 @@ int main()
     t_envs  *global_env_list;
 
     global_env_list = NULL;
-    okcso = minishell("$$$TERM$", global_env_list);
+    okcso = minishell("$TERM$$. $ $TERM", global_env_list);
     if (!okcso)
         return (1);
     return (0);
