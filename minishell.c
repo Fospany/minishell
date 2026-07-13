@@ -6,26 +6,26 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/30 12:54:38 by rici             ###   ########.fr       */
+/*   Updated: 2026/07/13 18:08:16 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "env_assign_helpers.c"
-#include "rest_helpers.c"
-#include "split_helpers.c"
-#include "split.c"
-#include "stepping_in_input.c"
-#include "syntax_error_check.c"
-#include "expansion_check.c"
-#include "environment_creation.c"
-#include "skippers.c"
-#include "tokenizing.c"
-#include "env_assign.c"
-#include "dollar_sign_handler.c"
-#include "is_special_character.c"
-#include "special_characters_checkers.c"
-#include "word_count_helpers.c"
+// #include "env_assign_helpers.c"
+// #include "rest_helpers.c"
+// #include "split_helpers.c"
+// #include "split.c"
+// #include "stepping_in_input.c"
+// #include "syntax_error_check.c"
+// #include "expansion_check.c"
+// #include "environment_creation.c"
+// #include "skippers.c"
+// #include "tokenizing.c"
+// #include "env_assign.c"
+// #include "dollar_sign_handler.c"
+// #include "is_special_character.c"
+// #include "special_characters_checkers.c"
+// #include "word_count_helpers.c"
 
 int determine_quote_type(char letter, int quote_type)
 {
@@ -167,41 +167,90 @@ char    **convert_struct_to_double_string(t_token *tokens)
     converted[words] = NULL;
     return (converted);
 }
+
 char    **minishell(const char *read_line, t_envs *env_list)
 {
-    int     i;
+    // int     i;
     t_token *tokens;
     char    **split_line;
     char    **converted;
 
-    i = 0;
+    // i = 0;
+    if(*read_line == '\0')
+   		return (NULL);
     split_line = split_read_line(read_line);
-    printf("%i\n", word_counter(read_line));
+    // printf("%i\n", word_counter(read_line));
     tokens = malloc(sizeof(t_token) * (word_counter(read_line) + 1));
     create_token_struct(tokens, split_line);
     env_list = env_list_addition(tokens, env_list);
     remove_quoted_word(split_line, tokens);
-    printf("GECI\n");
+    // printf("GECI\n");
     handle_expansions(env_list, tokens);
-    while (split_line[i])
-    {
-        printf("type: %i, value: %s, quote_type: %i\n", tokens[i].type, tokens[i].value, tokens[i].quote_type);
-        i++;
-    }
+    // while (split_line[i])
+    // {
+    //     printf("type: %i, value: %s, quote_type: %i\n", tokens[i].type, tokens[i].value, tokens[i].quote_type);
+    //     i++;
+    // }
     if (syntax_check(tokens))
         return (NULL);
     converted = convert_struct_to_double_string(tokens);
     return (converted);
 }
 
+// int main()
+// {
+//     char    **okcso;
+//     t_envs  *global_env_list;
+
+//     global_env_list = NULL;
+//     okcso = minishell("okcso $here", global_env_list);
+//     if (!okcso)
+//         return (1);
+//     return (0);
+// }
+
 int main()
 {
-    char    **okcso;
-    t_envs  *global_env_list;
+	char *path;
+	char *str;
+	char **av;
+	char  *tmp;
+	extern char **environ;
+	t_envs  *global_env_list;
 
-    global_env_list = NULL;
-    okcso = minishell("okcso $$here", global_env_list);
-    if (!okcso)
-        return (1);
+	pid_t pid;
+	path = "/Users/dorianabdullahi/.local/bin:/Users/dorianabdullahi/miniforge3/bin:/opt/homebrew/bin:/Users/dorianabdullahi/.local/share/solana/install/active_release/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/opt/X11/bin:/Library/Apple/usr/bin:/usr/local/share/dotnet:~/.dotnet/tools:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Users/dorianabdullahi/.gem/bin:/Users/dorianabdullahi/flutter/flutter/bin:/Users/dorianabdullahi/.local/bin:/Users/dorianabdullahi/miniforge3/bin:/Users/dorianabdullahi/.local/share/solana/install/active_release/bin:/Users/dorianabdullahi/.cargo/bin:/Users/dorianabdullahi/.pub-cache/bin:/Applications/Docker.app/Contents/Resources/bin/:/Users/dorianabdullahi/Desktop/development/sdks/flutter/bin:/Applications/Docker.app/Contents/Resources/bin/:/Users/dorianabdullahi/Desktop/development/sdks/flutter/bin";
+	global_env_list = NULL;
+	while ((str = readline("minishell: ")))
+	{
+		av = minishell(str, global_env_list);
+		if (!av)
+			continue;
+		// printf("%s\n, %s\n",av[0], av[1]);
+		// path = av[0];
+		// int i = 0;
+		// while (av[i])
+		// {
+		// 	printf("%s\n", av[i]);
+		// 	i++;
+		// }
+		// return 0;
+		tmp = handling_path(av[0], path);
+		if (!tmp)
+			continue;
+		pid = fork();
+		if (pid == 0)
+		{
+			execve(tmp, av, environ);
+			perror("execve");
+			exit(1);
+		}
+		waitpid(pid, NULL, 0);
+		//free arguments of av
+	}
+	if (!path)
+		return 0;
+    // if (minishell("lofasz$$$festek"))
+    //     return (1);
     return (0);
 }

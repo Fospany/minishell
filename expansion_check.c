@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:53:31 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/06/30 12:38:45 by rici             ###   ########.fr       */
+/*   Updated: 2026/06/30 13:04:05 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,17 +27,17 @@ void    copy_till_next_dollar(char *dest, char *source)
     dest[i] = 0;
 }
 
-int     ft_strlen(const char *s)
-{
-    int i;
+// int     ft_strlen(const char *s)
+// {
+//     int i;
 
-    i = 0;
-    if (!s)
-        return (i);
-    while (s[i])
-        i++;
-    return (i);
-}
+//     i = 0;
+//     if (!s)
+//         return (i);
+//     while (s[i])
+//         i++;
+//     return (i);
+// }
 
 int     dollar_in_word(char *word)
 {
@@ -56,7 +56,7 @@ int     dollar_in_word(char *word)
 char    *create_mock_word(char *expandable)
 {
     char    *mock_word;
-    
+
     mock_word = malloc(sizeof(char) * (count_letters_in_expansion(expandable + 1) + 1));
     if (!mock_word)
         return (NULL);
@@ -322,7 +322,7 @@ char    *copy_for_env_assign(char *env_assign_value)
 {
     char    *new_word;
     int     i;
-    
+
     i = 0;
     new_word = malloc(sizeof(char) * (ft_strlen(env_assign_value) + 1));
     while (env_assign_value[i])
@@ -339,7 +339,7 @@ char    *expand_env_assign(char *expandable, t_envs *env_list, int *index)
     char    *new_key;
     char    *new_word;
     int     i;
-    
+
     i = 0;
     new_key = copy_till_equal_sign(expandable);
     while (!string_compare(new_key, env_list[i].key))
@@ -353,7 +353,7 @@ void    handle_expansions(t_envs *env_list, t_token *tokens)
 {
     int i;
     int len;
-    
+
     i = 0;
     len = 0;
     while (tokens[i].value)
@@ -381,7 +381,7 @@ int     get_len_of_valid_expandable(const char *expandable)
     len = 0;
     while (expandable[len])
     {
-    
+
         if (is_dollar_sign(expandable[len]))
         {
             len++;

@@ -34,9 +34,9 @@
 # include <string.h>
 # include <errno.h>
 # include <sys/types.h>
-// # include <readline/readline.h>
-// # include <readline/history.h>
-// # include "libft/libft.h"
+# include <readline/readline.h>
+# include <readline/history.h>
+# include "libft/libft.h"
 
 
 typedef enum e_token_type
@@ -94,7 +94,7 @@ int     is_redir_or_pipe(const char letter);
 int     quote_in_word(const char *read_line, int *i, int *words);
 int     syntax_error_message_display(char *token_value);
 int     is_dollar_sign(const char letter);
-int     ft_strlen(const char *s);
+// int     ft_strlen(const char *s);
 int     is_pipe(const char letter);
 int     syntax_check(t_token *tokens);
 int     skip_to_next_dollar_sign(char *expandable);
@@ -125,6 +125,10 @@ char    *expand_env_assign(char *expandable, t_envs *env_list, int *index);
 char    *get_full_expandable_word(t_token curr_token, t_envs *env_list, int len);
 int     get_full_len_of_expandable(t_token curr_token, t_envs *env_list);
 int     digit_counter(pid_t pid);
-
+char *find_cmd_path(char *cmd_name, char **split_path, int *status);
+char *handling_path(char *cmd_name, char *path);
+int check_access(char *cmd);
+int check_cmd(char *cmd);
+void print_error(char *msg, char *cmd, int fd);
 
 #endif
