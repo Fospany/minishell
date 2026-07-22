@@ -16,6 +16,12 @@ SOURCE =	split.c \
 			special_characters_checkers.c \
 			tokenizing.c \
 			word_count_helpers.c \
+			path_handler.c \
+			cmd_list.c \
+			cmd_list_helpers.c \
+			executor.c \
+			executor_helpers.c \
+			pwd.c
 
 
 

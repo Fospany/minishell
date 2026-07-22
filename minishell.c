@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/07/13 18:08:16 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/07/22 20:30:33 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +168,7 @@ char    **convert_struct_to_double_string(t_token *tokens)
     return (converted);
 }
 
-char    **minishell(const char *read_line, t_envs *env_list)
+t_token *minishell(const char *read_line, t_envs *env_list)
 {
     // int     i;
     t_token *tokens;
@@ -194,7 +194,8 @@ char    **minishell(const char *read_line, t_envs *env_list)
     if (syntax_check(tokens))
         return (NULL);
     converted = convert_struct_to_double_string(tokens);
-    return (converted);
+    (void) converted;
+    return (tokens);
 }
 
 // int main()
@@ -208,49 +209,41 @@ char    **minishell(const char *read_line, t_envs *env_list)
 //         return (1);
 //     return (0);
 // }
-
-int main()
+/* void print_cmds(t_cmds *head)
 {
-	char *path;
-	char *str;
-	char **av;
-	char  *tmp;
-	extern char **environ;
-	t_envs  *global_env_list;
-
-	pid_t pid;
-	path = "/Users/dorianabdullahi/.local/bin:/Users/dorianabdullahi/miniforge3/bin:/opt/homebrew/bin:/Users/dorianabdullahi/.local/share/solana/install/active_release/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/opt/X11/bin:/Library/Apple/usr/bin:/usr/local/share/dotnet:~/.dotnet/tools:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Users/dorianabdullahi/.gem/bin:/Users/dorianabdullahi/flutter/flutter/bin:/Users/dorianabdullahi/.local/bin:/Users/dorianabdullahi/miniforge3/bin:/Users/dorianabdullahi/.local/share/solana/install/active_release/bin:/Users/dorianabdullahi/.cargo/bin:/Users/dorianabdullahi/.pub-cache/bin:/Applications/Docker.app/Contents/Resources/bin/:/Users/dorianabdullahi/Desktop/development/sdks/flutter/bin:/Applications/Docker.app/Contents/Resources/bin/:/Users/dorianabdullahi/Desktop/development/sdks/flutter/bin";
-	global_env_list = NULL;
-	while ((str = readline("minishell: ")))
+	t_cmds *curr = head;
+	int node = 1;
+	while (curr)
 	{
-		av = minishell(str, global_env_list);
-		if (!av)
-			continue;
-		// printf("%s\n, %s\n",av[0], av[1]);
-		// path = av[0];
-		// int i = 0;
-		// while (av[i])
-		// {
-		// 	printf("%s\n", av[i]);
-		// 	i++;
-		// }
-		// return 0;
-		tmp = handling_path(av[0], path);
-		if (!tmp)
-			continue;
-		pid = fork();
-		if (pid == 0)
-		{
-			execve(tmp, av, environ);
-			perror("execve");
-			exit(1);
-		}
-		waitpid(pid, NULL, 0);
-		//free arguments of av
+		printf("--- Node %d ---\n", node);
+		printf("fd_in: %d, fd_out: %d\n", curr->fd_in, curr->fd_out);
+		int i = -1;
+		while (curr->cmd && curr->cmd[++i])
+			printf("arg[%d]: %s\n", i, curr->cmd[i]);
+		node++;
+		curr = curr->next;
 	}
-	if (!path)
-		return 0;
-    // if (minishell("lofasz$$$festek"))
-    //     return (1);
+} */
+int main(int ac, char **av, char **envp)
+{
+	char *line;
+	t_envs  *global_env_list;
+	t_token *tokens;
+	t_cmds *cmds;
+	(void)ac;
+	(void)av;
+
+	global_env_list = NULL;
+	cmds = NULL;
+	while ((line = readline("minishell$ ")))
+	{
+		tokens = minishell(line, global_env_list);//free on fail
+		if (!tokens)
+			continue;
+		cmds = build_cmds(tokens);//free on fail
+		execute_cmds(cmds, envp);
+		if (line[0] != '\0' || !line)
+			add_history(line);
+	}
     return (0);
 }

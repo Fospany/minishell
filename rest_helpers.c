@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/22 10:26:24 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/29 13:25:05 by rici             ###   ########.fr       */
+/*   Updated: 2026/07/22 11:24:57 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int string_compare(const char *string1, const char *string2)
 {
     int i;
-    
+
     i = 0;
     while (string1[i] && string2[i])
     {
@@ -23,5 +23,7 @@ int string_compare(const char *string1, const char *string2)
             return (0);
         i++;
     }
-    return (1);
+    if (string1[i] == '\0' && string2[i] == '\0')
+   		return (1);
+    return (0);
 }
