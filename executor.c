@@ -6,85 +6,100 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 09:57:52 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/07/22 20:33:27 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/07/28 11:42:23 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int execute_cmds(t_cmds *cmds, char **envp)
+static int	fork_pipe(t_cmds *cmds, int *fd, int *stored_input, char **envp);
+
+int	execute_cmds(t_cmds *cmds, char **envp)
 {
-	int status;
+	t_cmds	*tmp;
+	int		fd[2];
+	int		status;
+	int		stored_input;
 
 	status = 0;
+	stored_input = -1;
+	ft_bzero(fd, 2);
+	tmp = cmds;
 	if (!cmds->next)
 	{
-		single_exec(cmds, envp, &status);
-		return status;
+		single_built_in(cmds, envp, &status);
+		return (status);
 	}
-	return status;
-}
-
-int find_path(char **envp)
-{
-	int i;
-
-	i = 0;
-	while (envp[i])
+	while (cmds)
 	{
-		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
-			return i;
-		i++;
+		if (!fork_pipe(cmds, fd, &stored_input, envp))
+			return (0);
+		clean_parent(cmds, fd, &stored_input);
+		cmds = cmds->next;
 	}
-	return (0);
+	wait_pids(tmp, &status);
+	return (status);
 }
 
-int single_built_in(t_cmds *cmds, char **envp, int *status)
+int	single_built_in(t_cmds *cmds, char **envp, int *status)
 {
-	int saved_stdin;
-	int saved_stdout;
+	int	saved_stdin;
+	int	saved_stdout;
 
 	saved_stdin = dup(STDIN_FILENO);
 	saved_stdout = dup(STDOUT_FILENO);
-
 	if (cmds->fd_in != 0)
-		dup2(cmds->fd_in, STDIN_FILENO);//fail check
+		safe_dup2(cmds->fd_in, STDIN_FILENO);
 	if (cmds->fd_out != 1)
-		dup2(cmds->fd_out, STDOUT_FILENO);//fail check
+		safe_dup2(cmds->fd_out, STDOUT_FILENO);
 	if (is_built_in(cmds->cmd[0]))
+		*status = run_built_in(cmds, envp);
+	else
 	{
-		//run built in
-		// restore stdin, out
-		// return
+		if (!single_exec(cmds, envp, status))
+			return (0);
 	}
-	single_exec(cmds, envp, status);
-	dup2(saved_stdin, STDIN_FILENO);//fail check
-	dup2(saved_stdout, STDOUT_FILENO);//fail check
+	safe_dup2(saved_stdin, STDIN_FILENO);
+	safe_dup2(saved_stdout, STDOUT_FILENO);
 	close(saved_stdin);
 	close(saved_stdout);
 	return (0);
 }
 
-int single_exec(t_cmds *cmd, char **envp, int *status)
+int	single_exec(t_cmds *cmd, char **envp, int *status)
 {
-	char *path;
+	char	*path;
 
-	path = handling_path(cmd->cmd[0], envp[find_path(envp)]);//fail check
+	if (!cmd->cmd || !cmd->cmd[0])
+		return (0);
+	path = handling_path(cmd->cmd[0], envp[find_path(envp)]);
+	if (!path)
+		return (0);
 	cmd->pid = fork();
 	if (cmd->pid == -1)
-	{
-		perror("minishell: ");
-		return (0);
-	}
+		return (perror("minishell: "), 0);
 	if (cmd->pid == 0)
 	{
 		if (cmd->fd_in != 0)
-			dup2(cmd->fd_in, STDIN_FILENO);//fail check
+			safe_dup2(cmd->fd_in, STDIN_FILENO);
 		if (cmd->fd_out != 1)
-			dup2(cmd->fd_out, STDOUT_FILENO);//fail check
+			safe_dup2(cmd->fd_out, STDOUT_FILENO);
 		execve(path, cmd->cmd, envp);
 		exit(1);
 	}
 	waitpid(cmd->pid, status, 0);
+	return (1);
+}
+
+static int	fork_pipe(t_cmds *cmds, int *fd, int *stored_input, char **envp)
+{
+	if (cmds->next)
+	{
+		if (pipe(fd) == -1)
+			return (0);
+	}
+	cmds->pid = fork();
+	if (cmds->pid == 0)
+		run_child(cmds, fd, *stored_input, envp);
 	return (1);
 }

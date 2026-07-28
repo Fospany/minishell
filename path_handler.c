@@ -6,7 +6,7 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/26 18:53:03 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/07/20 17:06:26 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/07/28 11:26:44 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*handling_path(char *cmd_name, char *path)
 
 	status = 0;
 	if (ft_strncmp(cmd_name, "", 1) == 0)
-		return NULL;
+		return (NULL);
 	if (ft_strchr(cmd_name, '/'))
 	{
 		status = check_access(cmd_name);
@@ -106,49 +106,9 @@ static void	print_status(int status, char *cmd)
 			print_error("No such file or directory", cmd, 2);
 		else
 			print_error("command not found", cmd, 2);
-
 	}
 	else if (status == 1)
 		print_error("is a directory", cmd, 2);
 	else if (status == 2)
 		print_error("Permission denied", cmd, 2);
-}
-
-int is_dir(char *cmd, struct stat *path_stat)
-{
-	if (stat(cmd, path_stat) == 0)
-	{
-		if ((path_stat->st_mode & S_IFMT) == S_IFDIR)
-			return 1;
-	}
-	return 0;
-}
-
-int	check_access(char *cmd)
-{
-	int	status;
-	struct stat path_stat;
-
-	status = 0;
-	if (is_dir(cmd, &path_stat))
-	{
-		status = 1;
-		return status;
-	}
-	if (access(cmd, F_OK) == 0)
-	{
-		status = 2;
-		if (access(cmd, X_OK) == 0)
-			status = 3;
-	}
-	return (status);
-}
-
-void	print_error(char *msg, char *cmd, int fd)
-{
-	ft_putstr_fd("minishell: ", fd);
-	ft_putstr_fd(cmd, fd);
-	ft_putstr_fd(": ", fd);
-	ft_putstr_fd(msg, fd);
-	ft_putchar_fd('\n', fd);
 }

@@ -169,11 +169,18 @@ int		process_token(t_cmds **head, t_cmds **curr, t_token *token, int *i);
 int		handle_in(t_cmds *curr, t_token *tokens, int *i);
 int		handle_out(t_cmds *curr, t_token *tokens, int *i);
 int		handle_pipe(t_cmds **head, t_cmds **curr);
+int handle_heredoc(t_cmds *curr, t_token *token, int *i);
 t_cmds	*build_cmds(t_token *tokens);
-
 int find_path(char **envp);
 int execute_cmds(t_cmds *cmds, char **envp);
 int single_exec(t_cmds *cmd, char **envp, int *status);
 int is_built_in(char *cmd);
 int single_built_in(t_cmds *cmds, char **envp, int *status);
+void safe_dup2(int oldfd, int newfd);
+void run_child(t_cmds *cmds, int *fd, int stored_input, char **envp);
+void clean_parent(t_cmds *cmds, int *fd, int *stored_input);
+void wait_pids(t_cmds *cmds, int *status);
+int run_built_in(t_cmds *cmd, char **envp);
+int echo(t_cmds *cmd);
+
 #endif

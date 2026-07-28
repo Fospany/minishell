@@ -6,7 +6,7 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/20 15:55:37 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/07/22 09:51:12 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/07/28 11:03:47 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,70 +30,56 @@ void	free_cmd(t_cmds *cmds)
 	curr = NULL;
 }
 
-int	handle_in(t_cmds *curr, t_token *tokens, int *i)
+t_cmds	*new_cmd(void)
 {
-	if (curr->fd_in != 0)
-		close(curr->fd_in);
-	curr->fd_in = open(tokens[*i + 1].value, O_RDONLY);
-	if (curr->fd_in == -1)
-	{
-		perror("minishell: ");
-		return (0);
-	}
-	return (1);
+	t_cmds	*new;
+
+	new = ft_calloc(1, sizeof(t_cmds));
+	if (!new)
+		return (NULL);
+	new->fd_out = 1;
+	return (new);
 }
 
-int	handle_out(t_cmds *curr, t_token *tokens, int *i)
+t_cmds	*add_cmd(t_cmds *head, t_cmds *new_list)
 {
-	if (curr->fd_out != 1)
-		close(curr->fd_out);
-	if (tokens[*i].type == token_redirect_out)
+	t_cmds	*tmp;
+
+	if (!new_list)
+		return (NULL);
+	if (!head)
 	{
-		curr->fd_out = open(tokens[*i + 1].value, O_WRONLY | O_CREAT | O_TRUNC,
-				0644);
-		if (curr->fd_out == -1)
-		{
-			perror("minishell: ");
-			return (0);
-		}
+		head = new_list;
+		return (head);
 	}
-	if (tokens[*i].type == token_append)
-	{
-		curr->fd_out = open(tokens[*i + 1].value, O_WRONLY | O_CREAT | O_APPEND,
-				0644);
-		if (curr->fd_out == -1)
-		{
-			perror("minishell: ");
-			return (0);
-		}
-	}
-	return (1);
+	tmp = head;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = new_list;
+	return (head);
 }
 
-int	handle_pipe(t_cmds **head, t_cmds **curr)
+int	add_arg_to_cmd(t_cmds *node, char *arg)
 {
-	t_cmds	*next;
+	char	**tmp;
+	int		count;
+	int		i;
 
-	next = NULL;
-	next = new_cmd();
-	if (!next)
+	if (!node)
 		return (0);
-	*head = add_cmd(*head, next);
-	if (!*head)
+	count = 0;
+	i = -1;
+	while (node->cmd && node->cmd[count])
+		count++;
+	tmp = ft_calloc(count + 2, sizeof(char *));
+	if (!tmp)
 		return (0);
-	*curr = next;
+	while (++i < count)
+		tmp[i] = node->cmd[i];
+	tmp[i] = ft_strdup(arg);
+	if (!tmp[i])
+		return (free(tmp), 0);
+	free(node->cmd);
+	node->cmd = tmp;
 	return (1);
 }
-
-
-// int handle_heredoc(t_cmds *curr, t_token *token, int *i)
-// {
-// 	char *line;
-
-// 	line = NULL;
-// 	while ((line = readline("> ")))
-// 	{
-
-// 	}
-// 	return (1);
-// }

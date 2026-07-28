@@ -6,27 +6,80 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/22 10:02:58 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/07/22 10:19:05 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/07/28 11:41:25 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int is_built_in(char *cmd)
+static void	child_redirections(t_cmds *cmds, int *fd, int stored_input);
+
+void	safe_dup2(int oldfd, int newfd)
 {
-	int i;
-	char **bi;
-
-	if (!cmd)
-		return (0);
-	i = 0;
-	bi = (char *[]){"echo", "cd", "pwd", "export", "unset", "env", "exit", NULL};
-	while (bi[i])
+	if (dup2(oldfd, newfd) == -1)
 	{
-		if (ft_strncmp(bi[i], cmd, ft_strlen(cmd)) == 0)
-			return (1);
-		i++;
+		perror("minishell: ");
+		exit(1);
 	}
-	return (0);
+}
 
+void	run_child(t_cmds *cmds, int *fd, int stored_input, char **envp)
+{
+	char	*path;
+
+	if (!cmds->cmd || !cmds->cmd[0])
+		exit(0);
+	child_redirections(cmds, fd, stored_input);
+	if (is_built_in(cmds->cmd[0]))
+		exit(run_built_in(cmds, envp));
+	path = handling_path(cmds->cmd[0], envp[find_path(envp)]);
+	if (!path)
+		exit(127);
+	execve(path, cmds->cmd, envp);
+	perror("minishell: ");
+	exit(1);
+}
+
+void	clean_parent(t_cmds *cmds, int *fd, int *stored_input)
+{
+	if (*stored_input != -1)
+		close(*stored_input);
+	if (cmds->fd_in != 0)
+		close(cmds->fd_in);
+	if (cmds->fd_out != 1)
+		close(cmds->fd_out);
+	if (cmds->next)
+	{
+		close(fd[1]);
+		*stored_input = fd[0];
+	}
+}
+
+void	wait_pids(t_cmds *cmds, int *status)
+{
+	while (cmds)
+	{
+		if (cmds->pid > 0)
+			waitpid(cmds->pid, status, 0);
+		cmds = cmds->next;
+	}
+}
+
+static void	child_redirections(t_cmds *cmds, int *fd, int stored_input)
+{
+	if (stored_input != -1)
+	{
+		safe_dup2(stored_input, STDIN_FILENO);
+		close(stored_input);
+	}
+	if (cmds->next)
+	{
+		safe_dup2(fd[1], STDOUT_FILENO);
+		close(fd[0]);
+		close(fd[1]);
+	}
+	if (cmds->fd_in != 0)
+		safe_dup2(cmds->fd_in, STDIN_FILENO);
+	if (cmds->fd_out != 1)
+		safe_dup2(cmds->fd_out, STDOUT_FILENO);
 }

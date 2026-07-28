@@ -17,11 +17,15 @@ SOURCE =	split.c \
 			tokenizing.c \
 			word_count_helpers.c \
 			path_handler.c \
+			path_handler_helpers.c \
 			cmd_list.c \
 			cmd_list_helpers.c \
+			redirections.c \
 			executor.c \
 			executor_helpers.c \
-			pwd.c
+			built_in_executor.c \
+			pwd.c \
+			echo.c
 
 
 
