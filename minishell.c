@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/07/22 20:30:33 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/07/29 09:38:38 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,6 +226,7 @@ t_token *minishell(const char *read_line, t_envs *env_list)
 } */
 int main(int ac, char **av, char **envp)
 {
+	int exit_status;
 	char *line;
 	t_envs  *global_env_list;
 	t_token *tokens;
@@ -235,6 +236,7 @@ int main(int ac, char **av, char **envp)
 
 	global_env_list = NULL;
 	cmds = NULL;
+	exit_status = 0;
 	while ((line = readline("minishell$ ")))
 	{
 		tokens = minishell(line, global_env_list);//free on fail

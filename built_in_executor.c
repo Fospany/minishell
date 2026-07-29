@@ -6,7 +6,7 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/28 11:15:38 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/07/28 12:06:22 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/07/28 12:52:36 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,37 @@ int	is_built_in(char *cmd)
 
 int	run_built_in(t_cmds *cmd, char **envp)
 {
+	int	cmd_len;
+
 	(void)envp;
-	if (ft_strlen(cmd->cmd[0]) == 3 && ft_strncmp(cmd->cmd[0], "pwd", 3) == 0)
+	cmd_len = ft_strlen(cmd->cmd[0]);
+	if (cmd_len == 3 && ft_strncmp(cmd->cmd[0], "pwd", 3) == 0)
 		return (pwd());
-	if (ft_strlen(cmd->cmd[0]) == 4 && ft_strncmp(cmd->cmd[0], "echo", 4) == 0)
+	if (cmd_len == 4 && ft_strncmp(cmd->cmd[0], "echo", 4) == 0)
 		return (echo(cmd));
 	return (0);
+}
+
+int	change_io(t_cmds *cmds)
+{
+	int	return_value;
+
+	return_value = 0;
+	if (cmds->fd_in != 0)
+	{
+		if (dup2(cmds->fd_in, STDIN_FILENO) == -1)
+		{
+			return_value = 1;
+			perror("minishell: ");
+		}
+	}
+	if (cmds->fd_out != 1)
+	{
+		if (dup2(cmds->fd_out, STDOUT_FILENO) == -1)
+		{
+			return_value = 1;
+			perror("minishell: ");
+		}
+	}
+	return (return_value);
 }
