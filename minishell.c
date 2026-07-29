@@ -6,7 +6,7 @@
 /*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/07/29 09:38:38 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/07/29 12:22:13 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ char    *get_rid_of_quotes(char *word, t_token token)
     i = 0;
     quote_type = 0;
     local_index = 0;
+    (void) token;
     new_word = malloc(sizeof(char) * (count_valid_char(word)) + 1);
     if (!new_word)
         return (NULL);
@@ -239,13 +240,13 @@ int main(int ac, char **av, char **envp)
 	exit_status = 0;
 	while ((line = readline("minishell$ ")))
 	{
-		tokens = minishell(line, global_env_list);//free on fail
+		tokens = minishell(line, global_env_list);
 		if (!tokens)
 			continue;
-		cmds = build_cmds(tokens);//free on fail
+		cmds = build_cmds(tokens);
 		execute_cmds(cmds, envp);
 		if (line[0] != '\0' || !line)
 			add_history(line);
 	}
-    return (0);
+    return (exit_status);
 }

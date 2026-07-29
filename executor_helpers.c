@@ -6,7 +6,7 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/22 10:02:58 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/07/28 11:41:25 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/07/29 13:29:44 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ void	run_child(t_cmds *cmds, int *fd, int stored_input, char **envp)
 
 	if (!cmds->cmd || !cmds->cmd[0])
 		exit(0);
+	if (cmds->fd_in == -1 || cmds->fd_out == -1)
+		exit(1);
 	child_redirections(cmds, fd, stored_input);
 	if (is_built_in(cmds->cmd[0]))
 		exit(run_built_in(cmds, envp));
@@ -79,7 +81,13 @@ static void	child_redirections(t_cmds *cmds, int *fd, int stored_input)
 		close(fd[1]);
 	}
 	if (cmds->fd_in != 0)
+	{
 		safe_dup2(cmds->fd_in, STDIN_FILENO);
+		close(cmds->fd_in);
+	}
 	if (cmds->fd_out != 1)
+	{
 		safe_dup2(cmds->fd_out, STDOUT_FILENO);
+		close(cmds->fd_out);
+	}
 }

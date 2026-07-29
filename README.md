@@ -9,7 +9,14 @@
 
 #Resources
 
-https://www.youtube.com/watch?v=6xbLgZpOBi8&list=WL&index=1&t=132s
+**dabdulla**
+
+https://www.youtube.com/watch?v=kDxjcyHu_Qs
+
+https://www.youtube.com/watch?v=ss1-REMJ9GA
+
+https://www.youtube.com/watch?v=6xbLgZpOBi8
 
 https://www.youtube.com/watch?v=NkfIUo_Qq4c
+
 https://www.youtube.com/watch?v=5fnVr-zH-SE

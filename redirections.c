@@ -6,7 +6,7 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/28 10:32:32 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/07/28 10:33:16 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/07/29 13:36:54 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ int	handle_in(t_cmds *curr, t_token *tokens, int *i)
 	curr->fd_in = open(tokens[*i + 1].value, O_RDONLY);
 	if (curr->fd_in == -1)
 	{
-		perror("minishell: ");
-		return (0);
+		ft_putstr_fd("minishell: ", 2);
+		perror(tokens[*i + 1].value);
 	}
 	return (1);
 }
@@ -37,8 +37,8 @@ int	handle_out(t_cmds *curr, t_token *token, int *i)
 				0644);
 		if (curr->fd_out == -1)
 		{
-			perror("minishell: ");
-			return (0);
+			ft_putstr_fd("minishell: ", 2);
+			perror(token[*i + 1].value);
 		}
 	}
 	if (token[*i].type == token_append)
@@ -47,8 +47,8 @@ int	handle_out(t_cmds *curr, t_token *token, int *i)
 				0644);
 		if (curr->fd_out == -1)
 		{
-			perror("minishell: ");
-			return (0);
+			ft_putstr_fd("minishell: ", 2);
+			perror(token[*i + 1].value);
 		}
 	}
 	return (1);

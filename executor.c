@@ -6,7 +6,7 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 09:57:52 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/07/28 12:51:44 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/07/29 13:56:57 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ int	execute_cmds(t_cmds *cmds, char **envp)
 	int		status;
 	int		stored_input;
 
+	if (!cmds)
+		return (0);
 	status = 0;
 	stored_input = -1;
 	ft_bzero(fd, 2);
@@ -29,6 +31,7 @@ int	execute_cmds(t_cmds *cmds, char **envp)
 	if (!cmds->next)
 	{
 		single_built_in(cmds, envp, &status);
+		clean_parent(cmds,fd, &stored_input);
 		return (status);
 	}
 	while (cmds)
@@ -47,13 +50,17 @@ int	single_built_in(t_cmds *cmds, char **envp, int *status)
 	int	saved_stdin;
 	int	saved_stdout;
 
+	if (!cmds->cmd)
+		return (0);
+	if (cmds->fd_in == -1 || cmds->fd_out == -1)
+		return (1);
 	if (is_built_in(cmds->cmd[0]))
 	{
 		saved_stdin = dup(STDIN_FILENO);
 		saved_stdout = dup(STDOUT_FILENO);
 		if (saved_stdin == -1 || saved_stdout == -1)
 			return (perror("minishell: "), 1);
-		if (!change_io(cmds))
+		if (change_io(cmds))
 		{
 			restore_io(saved_stdin, saved_stdout);
 			return (1);

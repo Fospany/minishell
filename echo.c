@@ -6,7 +6,7 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/28 11:53:25 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/07/28 12:11:59 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/07/29 13:40:18 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,13 @@ int	echo(t_cmds *cmd)
 	i = 1 + flags;
 	while (cmd->cmd[i])
 	{
-		ft_putstr_fd(cmd->cmd[i], 1);
+		ft_putstr_fd(cmd->cmd[i], STDOUT_FILENO);
 		if (cmd->cmd[i + 1])
-			ft_putchar_fd(' ', 1);
+			ft_putchar_fd(' ', STDOUT_FILENO);
 		i++;
 	}
 	if (!flags)
-		ft_putchar_fd('\n', 1);
+		ft_putchar_fd('\n', STDOUT_FILENO);
 	return (0);
 }
 
