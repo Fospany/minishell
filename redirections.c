@@ -20,10 +20,7 @@ int	handle_in(t_cmds *curr, t_token *tokens, int *i)
 		close(curr->fd_in);
 	curr->fd_in = open(tokens[*i + 1].value, O_RDONLY);
 	if (curr->fd_in == -1)
-	{
-		ft_putstr_fd("minishell: ", 2);
-		perror(tokens[*i + 1].value);
-	}
+		print_error(strerror(errno), tokens[*i + 1].value,  2);
 	return (1);
 }
 
@@ -36,20 +33,14 @@ int	handle_out(t_cmds *curr, t_token *token, int *i)
 		curr->fd_out = open(token[*i + 1].value, O_WRONLY | O_CREAT | O_TRUNC,
 				0644);
 		if (curr->fd_out == -1)
-		{
-			ft_putstr_fd("minishell: ", 2);
-			perror(token[*i + 1].value);
-		}
+			print_error(strerror(errno), token[*i + 1].value,  2);
 	}
 	if (token[*i].type == token_append)
 	{
 		curr->fd_out = open(token[*i + 1].value, O_WRONLY | O_CREAT | O_APPEND,
 				0644);
 		if (curr->fd_out == -1)
-		{
-			ft_putstr_fd("minishell: ", 2);
-			perror(token[*i + 1].value);
-		}
+			print_error(strerror(errno), token[*i + 1].value,  2);
 	}
 	return (1);
 }
@@ -94,7 +85,7 @@ int	handle_heredoc(t_cmds *curr, t_token *token, int *i)
 	int	fd[2];
 
 	if (pipe(fd) == -1)
-		return (perror("minishell: "), 0);
+		return (perror("minishell"), 0);
 	fill_heredoc(fd[1], token[*i + 1].value);
 	close(fd[1]);
 	if (curr->fd_in != 0)

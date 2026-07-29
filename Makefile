@@ -24,6 +24,7 @@ SOURCE =	split.c \
 			executor.c \
 			executor_helpers.c \
 			built_in_executor.c \
+			built_in_executor_helper.c \
 			pwd.c \
 			echo.c
 

@@ -12,34 +12,13 @@
 
 #include "minishell.h"
 
-static void	child_redirections(t_cmds *cmds, int *fd, int stored_input);
-
 void	safe_dup2(int oldfd, int newfd)
 {
 	if (dup2(oldfd, newfd) == -1)
 	{
-		perror("minishell: ");
+		perror("minishell");
 		exit(1);
 	}
-}
-
-void	run_child(t_cmds *cmds, int *fd, int stored_input, char **envp)
-{
-	char	*path;
-
-	if (!cmds->cmd || !cmds->cmd[0])
-		exit(0);
-	if (cmds->fd_in == -1 || cmds->fd_out == -1)
-		exit(1);
-	child_redirections(cmds, fd, stored_input);
-	if (is_built_in(cmds->cmd[0]))
-		exit(run_built_in(cmds, envp));
-	path = handling_path(cmds->cmd[0], envp[find_path(envp)]);
-	if (!path)
-		exit(127);
-	execve(path, cmds->cmd, envp);
-	perror("minishell: ");
-	exit(1);
 }
 
 void	clean_parent(t_cmds *cmds, int *fd, int *stored_input)
@@ -67,7 +46,7 @@ void	wait_pids(t_cmds *cmds, int *status)
 	}
 }
 
-static void	child_redirections(t_cmds *cmds, int *fd, int stored_input)
+void	child_redirections(t_cmds *cmds, int *fd, int stored_input)
 {
 	if (stored_input != -1)
 	{
@@ -89,5 +68,18 @@ static void	child_redirections(t_cmds *cmds, int *fd, int stored_input)
 	{
 		safe_dup2(cmds->fd_out, STDOUT_FILENO);
 		close(cmds->fd_out);
+	}
+}
+
+void close_inherited_fds(t_cmds *cmds)
+{
+	cmds = cmds->next;
+	while (cmds)
+	{
+		if (cmds->fd_in != 0 && cmds->fd_in != -1)
+			close(cmds->fd_in);
+		if (cmds->fd_out != 1 && cmds->fd_out != -1)
+			close(cmds->fd_out);
+		cmds = cmds->next;
 	}
 }

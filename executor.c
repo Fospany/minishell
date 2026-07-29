@@ -13,7 +13,6 @@
 #include "minishell.h"
 
 static int	fork_pipe(t_cmds *cmds, int *fd, int *stored_input, char **envp);
-static int	restore_io(int saved_stdin, int saved_stdout);
 
 int	execute_cmds(t_cmds *cmds, char **envp)
 {
@@ -59,7 +58,7 @@ int	single_built_in(t_cmds *cmds, char **envp, int *status)
 		saved_stdin = dup(STDIN_FILENO);
 		saved_stdout = dup(STDOUT_FILENO);
 		if (saved_stdin == -1 || saved_stdout == -1)
-			return (perror("minishell: "), 1);
+			return (print_error(strerror(errno), cmds->cmd[0], 2), 1);
 		if (change_io(cmds))
 		{
 			restore_io(saved_stdin, saved_stdout);
@@ -76,26 +75,6 @@ int	single_built_in(t_cmds *cmds, char **envp, int *status)
 	return (0);
 }
 
-static int	restore_io(int saved_stdin, int saved_stdout)
-{
-	int	return_value;
-
-	return_value = 0;
-	if (dup2(saved_stdin, STDIN_FILENO) == -1)
-	{
-		return_value = 1;
-		perror("minishell: ");
-	}
-	if (dup2(saved_stdout, STDOUT_FILENO) == -1)
-	{
-		return_value = 1;
-		perror("minishell: ");
-	}
-	close(saved_stdin);
-	close(saved_stdout);
-	return (return_value);
-}
-
 int	run_cmd(t_cmds *cmd, char **envp, int *status)
 {
 	char	*path;
@@ -107,18 +86,45 @@ int	run_cmd(t_cmds *cmd, char **envp, int *status)
 		return (0);
 	cmd->pid = fork();
 	if (cmd->pid == -1)
-		return (perror("minishell: "), 0);
+		return (print_error(strerror(errno), cmd->cmd[0], 2), 0);
 	if (cmd->pid == 0)
 	{
 		if (cmd->fd_in != 0)
+		{
 			safe_dup2(cmd->fd_in, STDIN_FILENO);
+			close(cmd->fd_in);
+		}
 		if (cmd->fd_out != 1)
+		{
 			safe_dup2(cmd->fd_out, STDOUT_FILENO);
+			close(cmd->fd_out);
+		}
 		execve(path, cmd->cmd, envp);
 		exit(1);
 	}
 	waitpid(cmd->pid, status, 0);
 	return (1);
+}
+
+void	run_child(t_cmds *cmds, int *fd, int stored_input, char **envp)
+{
+	char	*path;
+
+	if (!cmds->cmd || !cmds->cmd[0])
+		exit(0);
+	if (cmds->fd_in == -1 || cmds->fd_out == -1)
+		exit(1);
+	child_redirections(cmds, fd, stored_input);
+	close_inherited_fds(cmds);
+	if (is_built_in(cmds->cmd[0]))
+		exit(run_built_in(cmds, envp));
+	path = handling_path(cmds->cmd[0], envp[find_path(envp)]);
+	if (!path)
+		exit(127);
+	path = NULL;
+	execve(path, cmds->cmd, envp);
+	print_error(strerror(errno), cmds->cmd[0], 2);
+	exit(1);
 }
 
 static int	fork_pipe(t_cmds *cmds, int *fd, int *stored_input, char **envp)

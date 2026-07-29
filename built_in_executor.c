@@ -55,7 +55,7 @@ int	change_io(t_cmds *cmds)
 		if (dup2(cmds->fd_in, STDIN_FILENO) == -1)
 		{
 			return_value = 1;
-			perror("minishell: ");
+			perror("minishell");
 		}
 	}
 	if (cmds->fd_out != 1)
@@ -63,7 +63,7 @@ int	change_io(t_cmds *cmds)
 		if (dup2(cmds->fd_out, STDOUT_FILENO) == -1)
 		{
 			return_value = 1;
-			perror("minishell: ");
+			perror("minishell");
 		}
 	}
 	return (return_value);

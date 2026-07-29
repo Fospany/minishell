@@ -33,9 +33,10 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <stdio.h>
-#include <fcntl.h>
+# include <fcntl.h>
 # include <stdlib.h>
 # include <string.h>
+# include <sys/wait.h>
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <unistd.h>
@@ -175,8 +176,11 @@ int find_path(char **envp);
 int execute_cmds(t_cmds *cmds, char **envp);
 int run_cmd(t_cmds *cmd, char **envp, int *status);
 int is_built_in(char *cmd);
+int	restore_io(int saved_stdin, int saved_stdout);
 int single_built_in(t_cmds *cmds, char **envp, int *status);
 int change_io(t_cmds *cmds);
+void	child_redirections(t_cmds *cmds, int *fd, int stored_input);
+void close_inherited_fds(t_cmds *cmds);
 void safe_dup2(int oldfd, int newfd);
 void run_child(t_cmds *cmds, int *fd, int stored_input, char **envp);
 void clean_parent(t_cmds *cmds, int *fd, int *stored_input);
