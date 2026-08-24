@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 14:02:51 by bguthy            #+#    #+#             */
-/*   Updated: 2026/06/23 13:33:28 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/24 19:06:22 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,64 @@ int     is_quote(const char letter)
     return (0);
 }
 
+int     count_letters_till_next_quote(const char *read_line, int *i)
+{
+    int letters;
+    int quote;
+    
+    quote = read_line[*i];
+    letters = 0;
+    *i += 1;
+    while (read_line[*i])
+    {
+        if (read_line[(*i)++] == quote)
+            break ;
+        letters++;
+    }
+    return (letters + 2);
+}
+
+int     is_compatible_with_dollar_sign(const char letter)
+{
+    if (is_quote(letter))
+        return (0);
+    if (is_dollar_sign(letter))
+        return (0);
+    if (is_white_space_or_special_character(letter))
+        return (0);
+    return (1);
+}
+
+int     count_letters_for_dollar_sign(const char *read_line, int *i)
+{
+    int letters;
+    
+    letters = 1;
+    *i += 1;
+    while (read_line[*i])
+    {
+        if (is_compatible_with_dollar_sign(read_line[*i]))
+        {
+            (*i)++;
+            letters++;
+        }
+        else
+            break ;
+    }
+    return (letters);
+}
+
+int     dollar_ended_naturally(const char *read_line, int i)
+{
+    while (read_line[i])
+    {
+        if (!is_valid_after_dollar_sign(read_line[i]))
+            return (0);
+        i++;
+    }
+    return (1);
+}
+
 int     count_letters_till_next_word(const char *read_line, int i)
 {
     int letters;
@@ -53,6 +111,12 @@ int     count_letters_till_next_word(const char *read_line, int i)
     letters = 0;
     while (read_line[i])
     {
+        if (is_dollar_sign(read_line[i]))
+        {
+            letters += count_letters_for_dollar_sign(read_line, &i);
+            if (!dollar_ended_naturally(read_line, i))
+                break ;
+        }
         if (is_quote(read_line[i]))
             letters+= count_letters_till_next_quote(read_line, &i);
         if (is_white_space(read_line[i]) || !read_line[i])
@@ -76,7 +140,7 @@ char    *copy_till_next_word(const char *read_line, int *i)
     new_word = malloc(sizeof(char) * (letters + 1));
     if (!new_word)
         return (NULL);
-    while (!is_white_space(read_line[*i]) && read_line[(*i)])
+    while (!is_white_space(read_line[*i]) && read_line[(*i)] && local_index < letters)
     {
         new_word[local_index] = read_line[(*i)];
         if (is_quote(new_word[local_index]))
@@ -124,10 +188,8 @@ void    fill_up_double_pointer(char **split_line, const char *read_line)
 {
     int i;
     int w;
-    int quote_type;
 
     i = 0;
-    quote_type = 0;
     w = 0;
     while (read_line[i])
     {

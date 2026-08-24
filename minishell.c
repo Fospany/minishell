@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
+/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/07/09 16:00:39 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/08/24 19:00:10 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,30 @@
 #include "special_characters_checkers.c"
 #include "word_count_helpers.c"
 
-int determine_quote_type(char letter, int quote_type)
+void    assign_quote_type_to_token(char **words, t_token *tokens)
+{
+    int i;
+    int j;
+
+    i = 0;
+    j = 0;
+    while (words[i])
+    {
+        while (words[i][j])
+        {
+            if (is_quote(words[i][j]))
+            {
+                tokens[i].quote_type = words[i][j];
+                break ;
+            }
+            j++;
+        }
+        j = 0;
+        i++;
+    }
+}
+
+int     determine_quote_type(char letter, int quote_type)
 {
     if (quote_type == SINGLE_QUOTE && letter == SINGLE_QUOTE)
         quote_type = 0;
@@ -40,7 +63,7 @@ int determine_quote_type(char letter, int quote_type)
     return (quote_type);
 }
 
-int count_valid_char(char *quoted_word)
+int     count_valid_char(char *quoted_word)
 {
     int i;
     int counter;
@@ -61,7 +84,7 @@ int count_valid_char(char *quoted_word)
     return (counter);
 }
 
-void get_real_quote_type(char *word, int *quote_type, int *i)
+void    get_real_quote_type(char *word, int *quote_type, int *i)
 {
     while (check_for_quote(word[*i], quote_type) && word[*i] == word[(*i) + 1])
         (*i)++;
@@ -79,7 +102,7 @@ void get_real_quote_type(char *word, int *quote_type, int *i)
     }
 }
 
-char    *get_rid_of_quotes(char *word, t_token token)
+char    *get_rid_of_quotes(char *word, t_token *token)
 {
     int     i;
     int     quote_type;
@@ -96,7 +119,10 @@ char    *get_rid_of_quotes(char *word, t_token token)
     {
         get_real_quote_type(word, &quote_type, &i);
         if (is_dollar_sign(word[i]))
-            token.quote_type = quote_type;
+        {
+            printf("GECIS FASZ \n");
+            token[i].quote_type = quote_type;
+        }
         if (word[i] != quote_type && word[i])
         {
             new_word[local_index++] = word[i++];
@@ -122,7 +148,7 @@ void    remove_quoted_word(char **split_line, t_token *tokens)
         {
             if (check_for_quote_without_quote_type(split_line[i][j]))
             {
-                split_line[i] = get_rid_of_quotes(split_line[i], tokens[i]);
+                split_line[i] = get_rid_of_quotes(split_line[i], tokens);
                 tokens[i].value = split_line[i];
                 break ;
             }
@@ -180,6 +206,7 @@ char    **minishell(const char *read_line, t_envs *env_list)
     tokens = malloc(sizeof(t_token) * (word_counter(read_line) + 1));
     create_token_struct(tokens, split_line);
     env_list = env_list_addition(tokens, env_list);
+    assign_quote_type_to_token(split_line, tokens);
     remove_quoted_word(split_line, tokens);
     handle_expansions(env_list, tokens);
     while (split_line[i])
@@ -199,7 +226,7 @@ int main()
     t_envs  *global_env_list;
 
     global_env_list = NULL;
-    okcso = minishell("$TERM$$. $ $TERM", global_env_list);
+    okcso = minishell("$TE'RM'", global_env_list);
     if (!okcso)
         return (1);
     return (0);

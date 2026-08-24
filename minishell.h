@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
+/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/07/09 15:57:25 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/08/24 18:55:16 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,9 @@ char    *get_full_expandable_word(t_token curr_token, t_envs *env_list, int len)
 int     get_full_len_of_expandable(t_token curr_token, t_envs *env_list);
 int     digit_counter(pid_t pid);
 int     is_end(const char letter);
+void    copy_till_next_quote(const char *read_line, int *i, char *new_word, int *new_index);
+int     is_valid_after_dollar_sign(const char letter);
+int     dollar_ended_naturally(const char *read_line, int i);
 
 
 #endif
