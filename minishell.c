@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/30 12:54:38 by rici             ###   ########.fr       */
+/*   Updated: 2026/07/09 16:00:39 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,7 +181,6 @@ char    **minishell(const char *read_line, t_envs *env_list)
     create_token_struct(tokens, split_line);
     env_list = env_list_addition(tokens, env_list);
     remove_quoted_word(split_line, tokens);
-    printf("GECI\n");
     handle_expansions(env_list, tokens);
     while (split_line[i])
     {
@@ -200,7 +199,7 @@ int main()
     t_envs  *global_env_list;
 
     global_env_list = NULL;
-    okcso = minishell("okcso $$here", global_env_list);
+    okcso = minishell("$TERM$$. $ $TERM", global_env_list);
     if (!okcso)
         return (1);
     return (0);
