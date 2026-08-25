@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/25 17:18:13 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/25 17:38:36 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,49 +79,46 @@ void    get_real_quote_type(char *word, int *quote_type, int *i)
     }
 }
 
-char    *get_rid_of_quotes(char *word, t_token *token)
+char    *get_rid_of_them_quotes(t_token *tokens, int i)
 {
-    int     i;
+    int     j;
     int     quote_type;
-    char    *new_word;
     int     local_index;
-
-    i = 0;
+    char    *new_word;
+    
     quote_type = 0;
+    j = 0;
     local_index = 0;
-    new_word = malloc(sizeof(char) * (count_valid_char(word)) + 1);
+    new_word = malloc(sizeof(char) * (count_valid_char(tokens[i].value) + 1));
     if (!new_word)
         return (NULL);
-    while (word[i])
+    while (tokens[i].value[j])
     {
-        get_real_quote_type(word, &quote_type, &i);
-        if (word[i] != quote_type && word[i])
-        {
-            new_word[local_index++] = word[i++];
-        }
-        else if (word[i])
-            i++;
+        get_real_quote_type(tokens[i].value, &quote_type, &j);
+        if (tokens[i].value[j] != quote_type && tokens[i].value[j])
+            new_word[local_index++] = tokens[i].value[j++];
+        else if (tokens[i].value[j])
+            j++;
     }
     new_word[local_index] = 0;
-    free(word);
+    free(tokens[i].value);
     return (new_word);
 }
 
-void    remove_quoted_word(char **split_line, t_token *tokens)
+void    remove_quotes(t_token *tokens)
 {
     int i;
     int j;
 
     i = 0;
     j = 0;
-    while (split_line[i])
+    while (tokens[i].value)
     {
-        while (split_line[i][j])
+        while (tokens[i].value[j])
         {
-            if (check_for_quote_without_quote_type(split_line[i][j]))
+            if (check_for_quote_without_quote_type(tokens[i].value[j]))
             {
-                split_line[i] = get_rid_of_quotes(split_line[i], tokens);
-                tokens[i].value = split_line[i];
+                tokens[i].value = get_rid_of_them_quotes(tokens, i);
                 break ;
             }
             j++;
@@ -129,6 +126,8 @@ void    remove_quoted_word(char **split_line, t_token *tokens)
         i++;
         j = 0;
     }
+    
+    
 }
 
 int     number_of_valid_tokens(t_token *tokens)
@@ -179,7 +178,7 @@ char    **minishell(const char *read_line, t_envs *env_list)
     create_token_struct(tokens, split_line);
     env_list = env_list_addition(tokens, env_list);
     handle_expansions(env_list, tokens);
-    remove_quoted_word(split_line, tokens);
+    remove_quotes(tokens);
     while (split_line[i])
     {
         printf("type: %i, value: %s\n", tokens[i].type, tokens[i].value);
