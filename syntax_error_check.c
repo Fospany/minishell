@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_error_check.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
+/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 16:08:24 by bguhty            #+#    #+#             */
-/*   Updated: 2026/05/26 21:25:13 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/08/25 16:44:30 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,25 +15,21 @@
 int     syntax_error_message_display(char *token_value)
 {
     if (!token_value)
-        printf("minishell: syntax error neat the token `newline'\n");
+        printf("minishell: syntax error near the token `newline'\n");
     else
-        printf("minishell: syntax error neat the token `%s'\n", token_value);
+        printf("minishell: syntax error near the token `%s'\n", token_value);
     return (1);   
 }
 
-int pipe_check(t_token *tokens)
-{
-    int i;
 
-    i = 0;
+int pipe_check(t_token *tokens, int i)
+{
     if (tokens[0].type == token_pipe)
         return (syntax_error_message_display(tokens[i].value));
-    while (tokens[i].value)
-    {
-        if (tokens[i].type == token_pipe && (tokens[i + 1].type == token_pipe || tokens[i + 1].value == NULL))
-            return (syntax_error_message_display(tokens[i + 1].value));
-        i++;
-    }
+    if (tokens[i].type == token_pipe && (tokens[i + 1].type == token_pipe || tokens[i + 1].value == NULL))
+        return (syntax_error_message_display(tokens[i + 1].value));
+    if (tokens[i].type == token_pipe && tokens[i - 1].type != token_word)
+        return (syntax_error_message_display(tokens[i + 1].value));
     return (0);
 }
 
@@ -48,19 +44,12 @@ int redir_check(t_token *tokens, int i)
     return (0);
 }
 
-int heredoc_check(t_token *tokens)
+int heredoc_check(t_token *tokens, int i)
 {
-    int i;
-
-    i = 0;
-    while (tokens[i].value)
+    if (tokens[i].type == token_heredoc)
     {
-        if (tokens[i].type == token_heredoc)
-        {
-            if (tokens[i + 1].type != token_word)
-                return (syntax_error_message_display(tokens[i + 1].value));
-        }
-        i++;
+        if (tokens[i + 1].type != token_word)
+            return (syntax_error_message_display(tokens[i + 1].value));
     }
     return (0);
 }
@@ -70,11 +59,13 @@ int syntax_check(t_token *tokens)
     int i;
     
     i = 0;
-    if (pipe_check(tokens) || heredoc_check(tokens))
-        return (2);
     while (tokens[i].value)
     {
-        if (redir_check(tokens, i))
+        if (pipe_check(tokens, i))
+            return (2);
+        else if (heredoc_check(tokens, i))
+            return (2);
+        else if (redir_check(tokens, i))
             return (2);
         i++;
     }

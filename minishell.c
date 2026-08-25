@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/24 19:00:10 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/25 17:18:13 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,29 +26,6 @@
 #include "is_special_character.c"
 #include "special_characters_checkers.c"
 #include "word_count_helpers.c"
-
-void    assign_quote_type_to_token(char **words, t_token *tokens)
-{
-    int i;
-    int j;
-
-    i = 0;
-    j = 0;
-    while (words[i])
-    {
-        while (words[i][j])
-        {
-            if (is_quote(words[i][j]))
-            {
-                tokens[i].quote_type = words[i][j];
-                break ;
-            }
-            j++;
-        }
-        j = 0;
-        i++;
-    }
-}
 
 int     determine_quote_type(char letter, int quote_type)
 {
@@ -118,11 +95,6 @@ char    *get_rid_of_quotes(char *word, t_token *token)
     while (word[i])
     {
         get_real_quote_type(word, &quote_type, &i);
-        if (is_dollar_sign(word[i]))
-        {
-            printf("GECIS FASZ \n");
-            token[i].quote_type = quote_type;
-        }
         if (word[i] != quote_type && word[i])
         {
             new_word[local_index++] = word[i++];
@@ -206,12 +178,11 @@ char    **minishell(const char *read_line, t_envs *env_list)
     tokens = malloc(sizeof(t_token) * (word_counter(read_line) + 1));
     create_token_struct(tokens, split_line);
     env_list = env_list_addition(tokens, env_list);
-    assign_quote_type_to_token(split_line, tokens);
-    remove_quoted_word(split_line, tokens);
     handle_expansions(env_list, tokens);
+    remove_quoted_word(split_line, tokens);
     while (split_line[i])
     {
-        printf("type: %i, value: %s, quote_type: %i\n", tokens[i].type, tokens[i].value, tokens[i].quote_type);
+        printf("type: %i, value: %s\n", tokens[i].type, tokens[i].value);
         i++;
     }
     if (syntax_check(tokens))
@@ -226,7 +197,7 @@ int main()
     t_envs  *global_env_list;
 
     global_env_list = NULL;
-    okcso = minishell("$TE'RM'", global_env_list);
+    okcso = minishell("'$T'E$R'M'", global_env_list);
     if (!okcso)
         return (1);
     return (0);

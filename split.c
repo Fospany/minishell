@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 14:02:51 by bguthy            #+#    #+#             */
-/*   Updated: 2026/08/24 19:06:22 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/25 16:56:00 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,12 @@ int     count_letters_till_next_quote(const char *read_line, int *i)
     *i += 1;
     while (read_line[*i])
     {
-        if (read_line[(*i)++] == quote)
+        if (read_line[(*i)] == quote)
             break ;
         letters++;
+        (*i)++;
     }
-    return (letters + 2);
+    return (letters + 1);
 }
 
 int     is_compatible_with_dollar_sign(const char letter)
@@ -82,6 +83,12 @@ int     count_letters_for_dollar_sign(const char *read_line, int *i)
     *i += 1;
     while (read_line[*i])
     {
+        if (is_dollar_after_dollar(read_line[(*i)]))
+        {
+            letters++;
+            (*i)++;
+            break ;
+        }
         if (is_compatible_with_dollar_sign(read_line[*i]))
         {
             (*i)++;
@@ -114,8 +121,8 @@ int     count_letters_till_next_word(const char *read_line, int i)
         if (is_dollar_sign(read_line[i]))
         {
             letters += count_letters_for_dollar_sign(read_line, &i);
-            if (!dollar_ended_naturally(read_line, i))
-                break ;
+            // if (!dollar_ended_naturally(read_line, i))
+            //     break ;
         }
         if (is_quote(read_line[i]))
             letters+= count_letters_till_next_quote(read_line, &i);
@@ -149,6 +156,8 @@ char    *copy_till_next_word(const char *read_line, int *i)
              break ;
          else if (local_index >= letters && is_redir_or_pipe(read_line[*i]) && (!is_redir_or_pipe(new_word[local_index - 1]) || is_redir_or_pipe(new_word[local_index - 1])))
              break ;
+        if (!read_line[*i])
+            break ;
         local_index++;
         (*i)++;
     }

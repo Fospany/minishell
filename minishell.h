@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/24 18:55:16 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/25 17:17:52 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ typedef struct s_envs
 typedef struct s_token
 {
     char            *value;
-    int             quote_type;
     t_token_type    type;
 }                   t_token;
 

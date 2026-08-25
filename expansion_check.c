@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_check.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
+/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:53:31 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/07/09 15:57:21 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/08/25 17:15:17 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void    handle_expansions(t_envs *env_list, t_token *tokens)
     len = 0;
     while (tokens[i].value)
     {
-        if (dollar_in_word(tokens[i].value) && tokens[i].quote_type != SINGLE_QUOTE)
+        if (dollar_in_word(tokens[i].value))
         {
             len = get_full_len_of_expandable(tokens[i], env_list);
             tokens[i].value = get_full_expandable_word(tokens[i], env_list, len);
@@ -253,12 +253,16 @@ int     get_full_len_of_expandable(t_token curr_token, t_envs *env_list)
 {
     int     i;
     int     len;
+    int     quote_counter;
 
+    quote_counter = 0;
     i = 0;
     len = 0;
     while (curr_token.value[i])
     {
-        if (is_dollar_sign(curr_token.value[i]) && !is_end(curr_token.value[i + 1]))
+        if (is_quote(curr_token.value[i]))
+            quote_counter++;
+        if (is_dollar_sign(curr_token.value[i]) && !is_end(curr_token.value[i + 1]) && quote_counter % 2 == 0)
         {
             len += get_len_of_current_expandable(&curr_token.value[i + 1], env_list);
             i += (count_valid_characters_after_dollar_sign(&curr_token.value[i]));
@@ -309,15 +313,19 @@ char    *get_full_expandable_word(t_token curr_token, t_envs *env_list, int len)
 {
     char    *fully_expanded;
     char    *mock_expand;
+    int quote_counter;
     int i;
 
     i = 0;
+    quote_counter = 0;
     fully_expanded = ft_calloc(sizeof(char), (len + 1));
     if (!fully_expanded)
         return (NULL);
     while (curr_token.value[i])
     {
-        if (is_dollar_sign(curr_token.value[i]) && !is_end(curr_token.value[i + 1]))
+        if (is_quote(curr_token.value[i]))
+            quote_counter++;
+        if (is_dollar_sign(curr_token.value[i]) && !is_end(curr_token.value[i + 1]) && quote_counter % 2 == 0)
         {
             mock_expand = get_valid_expandable(curr_token.value + i + 1);
             make_expansion(fully_expanded, mock_expand, &i, env_list);
