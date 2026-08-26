@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   environment_creation.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 11:41:39 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/08/25 16:15:05 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/26 11:52:47 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

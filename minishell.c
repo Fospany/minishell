@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/25 17:38:36 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/26 12:14:12 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,30 +146,116 @@ int     number_of_valid_tokens(t_token *tokens)
     return (valid_tokens);
 }
 
-char    **convert_struct_to_double_string(t_token *tokens)
+void    copy_key(const char *envp, char *new_key)
 {
-    int     i;
-    int     words;
-    char    **converted;
+    int i;
 
     i = 0;
-    words = 0;
-    converted = malloc(sizeof(char *) * (number_of_valid_tokens(tokens) + 1));
-    while (tokens[i].value)
+    while (envp[i] != EQUAL_SIGN)
     {
-        if (tokens[i].type != 6)
-            converted[words++] = tokens[i].value;
+        new_key[i] = envp[i];
         i++;
     }
-    converted[words] = NULL;
-    return (converted);
 }
-char    **minishell(const char *read_line, t_envs *env_list)
+
+char    *insert_key(const char *envp)
+{
+    char    *new_key;
+    
+    new_key = malloc(sizeof(char) * (key_counter(envp) + 1));
+    if (!new_key)
+        return (NULL);
+    copy_key(envp, new_key);
+    return (new_key);   
+}
+
+void    copy_value(const char *envp, char *new_value)
+{
+    int i;
+    int j;
+    
+    i = 0;
+    j = 0;
+    while (envp[i] != EQUAL_SIGN)
+        i++;
+    i++;
+    while (envp[i])
+        new_value[j++] = envp[i++];
+}
+
+char    *insert_value(const char *envp)
+{
+    char    *new_value;
+
+    new_value = malloc(sizeof(char) * (value_counter(envp) + 1));
+    if (!new_value)
+        return (NULL);
+    copy_value(envp, new_value);
+    return (new_value);
+}
+
+int     clean_up_env_list(t_envs *env_list, int i)
+{
+    int j;
+
+    j = 0;
+    while (j <= i)
+    {
+        free(env_list[j].key);
+        free(env_list[j].value);
+        j++;
+    }
+    free(env_list);
+    return (0);
+}
+
+int    copy_from_envp_to_own_env_list(const char **envp, t_envs *env_list)
+{
+    int i;
+
+    i = 0;
+    while (envp[i])
+    {
+        env_list[i].key = insert_key(envp[i]);
+        if (!env_list[i].key)
+            return (clean_up_env_list(env_list, i));
+        env_list[i].value = insert_value(envp[i]);
+        if (!env_list[i].value)
+            return (clean_up_env_list(env_list, i));
+        i++;
+    }
+    env_list[i].key = NULL;
+    env_list[i].value = NULL;
+    return (1);
+}
+
+int     get_len_of_envp(const char **envp)
+{
+    int i;
+
+    while (envp[i])
+        i++;
+    return (i);
+}
+
+int     put_envp_into_own_env_list(const char **envp, t_envs *env_list)
+{
+    int list_size;
+
+    list_size = get_len_of_envp(envp);
+    env_list = malloc(sizeof(t_envs) * (list_size + 1));
+    if (!env_list)
+        return (0);
+    if (!copy_from_envp_to_own_env_list(envp, env_list))
+        return (0);
+    return (1);
+}
+
+t_token    *minishell(const char *read_line, t_envs *env_list)
 {
     int     i;
     t_token *tokens;
     char    **split_line;
-    char    **converted;
 
     i = 0;
     split_line = split_read_line(read_line);
@@ -186,16 +272,17 @@ char    **minishell(const char *read_line, t_envs *env_list)
     }
     if (syntax_check(tokens))
         return (NULL);
-    converted = convert_struct_to_double_string(tokens);
-    return (converted);
+    return (tokens);
 }
 
-int main()
+int main(int args, char **argv, const char **envp)
 {
-    char    **okcso;
+    t_token    *okcso;
     t_envs  *global_env_list;
 
     global_env_list = NULL;
+    if (!put_envp_into_own_env_list(envp, global_env_list))
+        return (1);
     okcso = minishell("'$T'E$R'M'", global_env_list);
     if (!okcso)
         return (1);
