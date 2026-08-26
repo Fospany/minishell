@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_helpers.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 21:09:28 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/29 18:32:45 by rici             ###   ########.fr       */
+/*   Updated: 2026/08/24 13:58:51 by bguhty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,10 @@
 
 int    set_quote_type(const char letter)
 {
-    int quote_type;
-    
-    quote_type = 0;
     if (letter == SINGLE_QUOTE)
-        quote_type = SINGLE_QUOTE;
+        return (SINGLE_QUOTE);
     else if (letter == DOUBLE_QUOTE)
-        quote_type = DOUBLE_QUOTE;
-    return (quote_type);
+        return (DOUBLE_QUOTE);
 }
 
 int check_for_quote(const char letter, int *quote_type)
@@ -54,6 +50,7 @@ int word_counter(const char *read_line)
 {
     int i;
     int words;
+    
     words = 0;
     i = 0;
     while (read_line[i])
@@ -64,6 +61,8 @@ int word_counter(const char *read_line)
         if (read_line[i] && is_word_2(read_line, &i, &words))
             words++;
     }
+    if (words == 0 && i > 0)
+        words++;
     return (words);
 }
 
