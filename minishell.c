@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rici <rici@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2026/07/29 12:22:13 by dabdulla         ###   ########.fr       */
+=======
+/*   Updated: 2026/08/26 12:14:12 by guthybarnak      ###   ########.fr       */
+>>>>>>> e20ff6160b591795556847ceb6c13f07a1c31125
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +31,7 @@
 // #include "special_characters_checkers.c"
 // #include "word_count_helpers.c"
 
-int determine_quote_type(char letter, int quote_type)
+int     determine_quote_type(char letter, int quote_type)
 {
     if (quote_type == SINGLE_QUOTE && letter == SINGLE_QUOTE)
         quote_type = 0;
@@ -40,7 +44,7 @@ int determine_quote_type(char letter, int quote_type)
     return (quote_type);
 }
 
-int count_valid_char(char *quoted_word)
+int     count_valid_char(char *quoted_word)
 {
     int i;
     int counter;
@@ -61,7 +65,7 @@ int count_valid_char(char *quoted_word)
     return (counter);
 }
 
-void get_real_quote_type(char *word, int *quote_type, int *i)
+void    get_real_quote_type(char *word, int *quote_type, int *i)
 {
     while (check_for_quote(word[*i], quote_type) && word[*i] == word[(*i) + 1])
         (*i)++;
@@ -79,52 +83,51 @@ void get_real_quote_type(char *word, int *quote_type, int *i)
     }
 }
 
-char    *get_rid_of_quotes(char *word, t_token token)
+char    *get_rid_of_them_quotes(t_token *tokens, int i)
 {
-    int     i;
+    int     j;
     int     quote_type;
-    char    *new_word;
     int     local_index;
-
-    i = 0;
+    char    *new_word;
+    
     quote_type = 0;
+    j = 0;
     local_index = 0;
+<<<<<<< HEAD
     (void) token;
     new_word = malloc(sizeof(char) * (count_valid_char(word)) + 1);
+=======
+    new_word = malloc(sizeof(char) * (count_valid_char(tokens[i].value) + 1));
+>>>>>>> e20ff6160b591795556847ceb6c13f07a1c31125
     if (!new_word)
         return (NULL);
-    while (word[i])
+    while (tokens[i].value[j])
     {
-        get_real_quote_type(word, &quote_type, &i);
-        if (is_dollar_sign(word[i]))
-            token.quote_type = quote_type;
-        if (word[i] != quote_type && word[i])
-        {
-            new_word[local_index++] = word[i++];
-        }
-        else if (word[i])
-            i++;
+        get_real_quote_type(tokens[i].value, &quote_type, &j);
+        if (tokens[i].value[j] != quote_type && tokens[i].value[j])
+            new_word[local_index++] = tokens[i].value[j++];
+        else if (tokens[i].value[j])
+            j++;
     }
     new_word[local_index] = 0;
-    free(word);
+    free(tokens[i].value);
     return (new_word);
 }
 
-void    remove_quoted_word(char **split_line, t_token *tokens)
+void    remove_quotes(t_token *tokens)
 {
     int i;
     int j;
 
     i = 0;
     j = 0;
-    while (split_line[i])
+    while (tokens[i].value)
     {
-        while (split_line[i][j])
+        while (tokens[i].value[j])
         {
-            if (check_for_quote_without_quote_type(split_line[i][j]))
+            if (check_for_quote_without_quote_type(tokens[i].value[j]))
             {
-                split_line[i] = get_rid_of_quotes(split_line[i], tokens[i]);
-                tokens[i].value = split_line[i];
+                tokens[i].value = get_rid_of_them_quotes(tokens, i);
                 break ;
             }
             j++;
@@ -132,6 +135,8 @@ void    remove_quoted_word(char **split_line, t_token *tokens)
         i++;
         j = 0;
     }
+    
+    
 }
 
 int     number_of_valid_tokens(t_token *tokens)
@@ -150,31 +155,116 @@ int     number_of_valid_tokens(t_token *tokens)
     return (valid_tokens);
 }
 
-char    **convert_struct_to_double_string(t_token *tokens)
+void    copy_key(const char *envp, char *new_key)
 {
-    int     i;
-    int     words;
-    char    **converted;
+    int i;
 
     i = 0;
-    words = 0;
-    converted = malloc(sizeof(char *) * (number_of_valid_tokens(tokens) + 1));
-    while (tokens[i].value)
+    while (envp[i] != EQUAL_SIGN)
     {
-        if (tokens[i].type != 6)
-            converted[words++] = tokens[i].value;
+        new_key[i] = envp[i];
         i++;
     }
-    converted[words] = NULL;
-    return (converted);
 }
 
-t_token *minishell(const char *read_line, t_envs *env_list)
+char    *insert_key(const char *envp)
+{
+    char    *new_key;
+    
+    new_key = malloc(sizeof(char) * (key_counter(envp) + 1));
+    if (!new_key)
+        return (NULL);
+    copy_key(envp, new_key);
+    return (new_key);   
+}
+
+void    copy_value(const char *envp, char *new_value)
+{
+    int i;
+    int j;
+    
+    i = 0;
+    j = 0;
+    while (envp[i] != EQUAL_SIGN)
+        i++;
+    i++;
+    while (envp[i])
+        new_value[j++] = envp[i++];
+}
+
+char    *insert_value(const char *envp)
+{
+    char    *new_value;
+
+    new_value = malloc(sizeof(char) * (value_counter(envp) + 1));
+    if (!new_value)
+        return (NULL);
+    copy_value(envp, new_value);
+    return (new_value);
+}
+
+int     clean_up_env_list(t_envs *env_list, int i)
+{
+    int j;
+
+    j = 0;
+    while (j <= i)
+    {
+        free(env_list[j].key);
+        free(env_list[j].value);
+        j++;
+    }
+    free(env_list);
+    return (0);
+}
+
+int    copy_from_envp_to_own_env_list(const char **envp, t_envs *env_list)
+{
+    int i;
+
+    i = 0;
+    while (envp[i])
+    {
+        env_list[i].key = insert_key(envp[i]);
+        if (!env_list[i].key)
+            return (clean_up_env_list(env_list, i));
+        env_list[i].value = insert_value(envp[i]);
+        if (!env_list[i].value)
+            return (clean_up_env_list(env_list, i));
+        i++;
+    }
+    env_list[i].key = NULL;
+    env_list[i].value = NULL;
+    return (1);
+}
+
+int     get_len_of_envp(const char **envp)
+{
+    int i;
+
+    while (envp[i])
+        i++;
+    return (i);
+}
+
+int     put_envp_into_own_env_list(const char **envp, t_envs *env_list)
+{
+    int list_size;
+
+    list_size = get_len_of_envp(envp);
+    env_list = malloc(sizeof(t_envs) * (list_size + 1));
+    if (!env_list)
+        return (0);
+    if (!copy_from_envp_to_own_env_list(envp, env_list))
+        return (0);
+    return (1);
+}
+
+t_token    *minishell(const char *read_line, t_envs *env_list)
 {
     // int     i;
     t_token *tokens;
     char    **split_line;
-    char    **converted;
 
     // i = 0;
     if(*read_line == '\0')
@@ -184,57 +274,24 @@ t_token *minishell(const char *read_line, t_envs *env_list)
     tokens = malloc(sizeof(t_token) * (word_counter(read_line) + 1));
     create_token_struct(tokens, split_line);
     env_list = env_list_addition(tokens, env_list);
-    remove_quoted_word(split_line, tokens);
-    // printf("GECI\n");
     handle_expansions(env_list, tokens);
-    // while (split_line[i])
-    // {
-    //     printf("type: %i, value: %s, quote_type: %i\n", tokens[i].type, tokens[i].value, tokens[i].quote_type);
-    //     i++;
-    // }
+    remove_quotes(tokens);
+    while (split_line[i])
+    {
+        printf("type: %i, value: %s\n", tokens[i].type, tokens[i].value);
+        i++;
+    }
     if (syntax_check(tokens))
         return (NULL);
-    converted = convert_struct_to_double_string(tokens);
-    (void) converted;
     return (tokens);
 }
 
-// int main()
-// {
-//     char    **okcso;
-//     t_envs  *global_env_list;
-
-//     global_env_list = NULL;
-//     okcso = minishell("okcso $here", global_env_list);
-//     if (!okcso)
-//         return (1);
-//     return (0);
-// }
-/* void print_cmds(t_cmds *head)
+int main(int args, char **argv, const char **envp)
 {
-	t_cmds *curr = head;
-	int node = 1;
-	while (curr)
-	{
-		printf("--- Node %d ---\n", node);
-		printf("fd_in: %d, fd_out: %d\n", curr->fd_in, curr->fd_out);
-		int i = -1;
-		while (curr->cmd && curr->cmd[++i])
-			printf("arg[%d]: %s\n", i, curr->cmd[i]);
-		node++;
-		curr = curr->next;
-	}
-} */
-int main(int ac, char **av, char **envp)
-{
-	int exit_status;
-	char *line;
-	t_envs  *global_env_list;
-	t_token *tokens;
-	t_cmds *cmds;
-	(void)ac;
-	(void)av;
+    t_token    *okcso;
+    t_envs  *global_env_list;
 
+<<<<<<< HEAD
 	global_env_list = NULL;
 	cmds = NULL;
 	exit_status = 0;
@@ -250,3 +307,13 @@ int main(int ac, char **av, char **envp)
 	}
     return (exit_status);
 }
+=======
+    global_env_list = NULL;
+    if (!put_envp_into_own_env_list(envp, global_env_list))
+        return (1);
+    okcso = minishell("'$T'E$R'M'", global_env_list);
+    if (!okcso)
+        return (1);
+    return (0);
+}
+>>>>>>> e20ff6160b591795556847ceb6c13f07a1c31125
