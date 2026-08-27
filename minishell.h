@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/27 13:27:24 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/08/27 17:10:41 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 # include <sys/types.h>
 // # include <readline/readline.h>
 // # include <readline/history.h>
-// # include "libft/libft.h"
+# include "libft/libft.h"
 
 
 typedef enum e_token_type
@@ -53,9 +53,10 @@ typedef enum e_token_type
 
 typedef struct s_envs
 {
-    char            *key;
-    char            *value;
-}                   t_envs;
+    char                *key;
+    char                *value;
+    struct s_envs       *next;
+}                       t_envs;
 
 typedef struct s_token
 {

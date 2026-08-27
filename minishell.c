@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/27 13:28:33 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/08/27 17:11:12 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,8 +126,6 @@ void    remove_quotes(t_token *tokens)
         i++;
         j = 0;
     }
-    
-    
 }
 
 void    copy_key(const char *envp, char *new_key)
@@ -140,6 +138,7 @@ void    copy_key(const char *envp, char *new_key)
         new_key[i] = envp[i];
         i++;
     }
+    new_key[i] = 0;
 }
 
 char    *insert_key(const char *envp)
@@ -165,6 +164,7 @@ void    copy_value(const char *envp, char *new_value)
     i++;
     while (envp[i])
         new_value[j++] = envp[i++];
+    new_value[j] = 0;
 }
 
 char    *insert_value(const char *envp)
@@ -193,25 +193,74 @@ int     clean_up_env_list(t_envs *env_list, int i)
     return (0);
 }
 
-int    copy_from_envp_to_own_env_list(const char **envp, t_envs *env_list)
+int     get_env_len(const char **envp)
 {
-    int i;
+    int len;
 
+    len = 0;
+    while (envp[len])
+        len++;
+    return (len);
+}
+
+void    add_envp_to_list(t_envs **my_list)
+{
+    
+    ft_lstadd_back(my_lilst, )
+}
+
+
+t_envs     *copy_from_envp_to_own_env_list(const char **envp, t_envs *env_list)
+{
+    t_envs *tail;
+    t_envs *new_node;
+    int     i;
+    int     env_len;
+    
     i = 0;
-    while (envp[i])
+    env_len = get_env_len(envp);
+    while (i < env_len)
     {
-        env_list[i].key = insert_key(envp[i]);
-        if (!env_list[i].key)
-            return (clean_up_env_list(env_list, i));
-        env_list[i].value = insert_value(envp[i]);
-        if (!env_list[i].value)
-            return (clean_up_env_list(env_list, i));
+        new_node = malloc(sizeof(t_envs));
+        if (!new_node)
+            return (free_up_list(env_list, i), NULL);
+        new_node->key = insert_key(envp[i]);
+        new_node->value = insert_value(envp[i]);
+        new_node->next = NULL;
+        if (i == 0)
+        {
+            env_list = new_node;
+            tail = new_node;
+        }
+        else
+        {
+            tail->next = new_node;
+            tail = new_node;
+        }
         i++;
     }
-    env_list[i].key = NULL;
-    env_list[i].value = NULL;
     return (1);
 }
+
+// int    copy_from_envp_to_own_env_list(const char **envp, t_envs *env_list)
+// {
+//     int i;
+
+//     i = 0;
+//     while (envp[i])
+//     {
+//         env_list[i].key = insert_key(envp[i]);
+//         if (!env_list[i].key)
+//             return (clean_up_env_list(env_list, i));
+//         env_list[i].value = insert_value(envp[i]);
+//         if (!env_list[i].value)
+//             return (clean_up_env_list(env_list, i));
+//         i++;
+//     }
+//     env_list[i].key = NULL;
+//     env_list[i].value = NULL;
+//     return (1);
+// }
 
 int     get_len_of_envp(const char **envp)
 {
@@ -225,12 +274,6 @@ int     get_len_of_envp(const char **envp)
 
 int     put_envp_into_own_env_list(const char **envp, t_envs *env_list)
 {
-    int list_size;
-
-    list_size = get_len_of_envp(envp);
-    env_list = malloc(sizeof(t_envs) * (list_size + 1));
-    if (!env_list)
-        return (0);
     if (!copy_from_envp_to_own_env_list(envp, env_list))
         return (0);
     return (1);
@@ -247,7 +290,7 @@ t_token    *minishell(const char *read_line, t_envs *env_list)
     printf("%i\n", word_counter(read_line));
     tokens = malloc(sizeof(t_token) * (word_counter(read_line) + 2));
     create_token_struct(tokens, split_line);
-    env_list = env_list_addition(tokens, env_list);
+    add_env_variables_to_env_list(env_list, tokens);
     handle_expansions(env_list, tokens);
     remove_quotes(tokens);
     while (split_line[i])
