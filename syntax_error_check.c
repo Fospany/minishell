@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_error_check.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 16:08:24 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/25 16:44:30 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/27 09:48:39 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int     syntax_error_message_display(char *token_value)
+int     syntax_error_message_display(const char *token_value)
 {
     if (!token_value)
         printf("minishell: syntax error near the token `newline'\n");
@@ -58,7 +58,7 @@ int syntax_check(t_token *tokens)
 {
     int i;
     
-    i = 0;
+    i = 1;
     while (tokens[i].value)
     {
         if (pipe_check(tokens, i))

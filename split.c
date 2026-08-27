@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 14:02:51 by bguthy            #+#    #+#             */
-/*   Updated: 2026/08/25 16:56:00 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/27 11:14:41 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int     count_letters_for_dollar_sign(const char *read_line, int *i)
     *i += 1;
     while (read_line[*i])
     {
-        if (is_dollar_after_dollar(read_line[(*i)]))
+        if (is_dollar_after_dollar(read_line[(*i)]) || is_question_mark(read_line[(*i)]))
         {
             letters++;
             (*i)++;

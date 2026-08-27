@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/25 17:34:51 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/27 13:27:24 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # define REDIR_IN 60
 # define REDIR_OUT 62
 # define PIPE 124
+# define QUESTION_MARK 63
 
 
 # include <stdio.h>
@@ -58,7 +59,7 @@ typedef struct s_envs
 
 typedef struct s_token
 {
-    char            *value;
+    const char            *value;
     t_token_type    type;
 }                   t_token;
 
@@ -84,14 +85,14 @@ void    split_clean_up(char **split_line, int i);
 int     env_assign_check(char *string);
 void    remove_quotes(t_token *tokens);
 int     check_for_quote_without_quote_type(const char letter);
-void    get_real_quote_type(char *word, int *quote_type, int *i);
+void    get_real_quote_type(const char *word, int *quote_type, int *i);
 t_envs  *env_list_addition(t_token *tokens, t_envs *env_list);
 int     dollar_sign_exception(const char *read_line, int *i, int *words);
 int     is_heredoc_or_append(const char letter1, const char letter2);
 int     is_special_character(const char *read_line, int i, int *letters);
 int     is_redir_or_pipe(const char letter);
 int     quote_in_word(const char *read_line, int *i, int *words);
-int     syntax_error_message_display(char *token_value);
+int     syntax_error_message_display(const char *token_value);
 int     is_dollar_sign(const char letter);
 int     ft_strlen(const char *s);
 int     is_pipe(const char letter);
@@ -117,13 +118,14 @@ int     letter_after_dollar_is_num_or_astrisk(const char letter);
 int     is_underline(char letter);
 int     is_white_space_or_special_character(const char letter);
 int     key_counter(const char *envp);
-char    *get_full_expandable_word(t_token curr_token, t_envs *env_list, int len);
-int     get_full_len_of_expandable(t_token curr_token, t_envs *env_list);
+char    *get_full_expandable_word(t_token curr_token, t_envs *env_list, int len, int exit_code);
+int     get_full_len_of_expandable(t_token curr_token, t_envs *env_list, t_token *token);
 int     digit_counter(pid_t pid);
 int     is_end(const char letter);
 void    copy_till_next_quote(const char *read_line, int *i, char *new_word, int *new_index);
 int     is_valid_after_dollar_sign(const char letter);
 int     dollar_ended_naturally(const char *read_line, int i);
+int     is_question_mark(const char letter);
 
 
 #endif

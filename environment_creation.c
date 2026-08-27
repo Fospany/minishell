@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 11:41:39 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/08/26 11:52:47 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/08/27 09:47:54 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int     number_of_env_variables(t_token *tokens, t_envs *env_list)
     int i;
     int env_variables;
 
-    i = 0;
+    i = 1;
     env_variables = 0;
     while (tokens[i].value != NULL)
     {
@@ -68,7 +68,7 @@ t_envs  copy_from_token_list(t_token tokens)
     int i;
     int j;
 
-    i = 0;
+    i = 1;
     j = 0;
     new_node.key = malloc(sizeof(char) * (key_counter(tokens.value) + 1));
     new_node.value = malloc(sizeof(char) * (value_counter(tokens.value)) + 1);
@@ -89,8 +89,7 @@ void    fill_up_env_list(t_envs *new_env_list, t_token *tokens, t_envs *prev_env
     int j;
 
     i = 0;
-    j = 0;
-
+    j = 1;
     while (prev_env_list && prev_env_list[i].key)
     {
         new_env_list[i].key = prev_env_list[i].key;
