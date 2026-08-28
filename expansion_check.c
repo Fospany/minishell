@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_check.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:53:31 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/08/25 17:15:17 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/28 14:12:43 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int     ft_strlen(const char *s)
-{
-    int i;
+// int     ft_strlen(const char *s)
+// {
+//     int i;
 
 //     i = 0;
 //     if (!s)
@@ -24,7 +24,7 @@ int     ft_strlen(const char *s)
 //     return (i);
 // }
 
-int     dollar_in_word(char *word)
+int     dollar_in_word(const char *word)
 {
     int i;
 
@@ -110,15 +110,15 @@ void    handle_expansions(t_envs *env_list, t_token *tokens)
 {
     int i;
     int len;
-
-    i = 0;
+    
+    i = 1;
     len = 0;
     while (tokens[i].value)
     {
         if (dollar_in_word(tokens[i].value))
         {
-            len = get_full_len_of_expandable(tokens[i], env_list);
-            tokens[i].value = get_full_expandable_word(tokens[i], env_list, len);
+            len = get_full_len_of_expandable(tokens[i], env_list, tokens);
+            tokens[i].value = get_full_expandable_word(tokens[i], env_list, len, tokens[0].type);
         }
         i++;
     }
@@ -139,7 +139,7 @@ int     get_len_of_valid_expandable(const char *expandable)
     while (expandable[len])
     {
     
-        if (is_dollar_sign(expandable[0]))
+        if (is_dollar_sign(expandable[len]) || is_question_mark(expandable[len]))
         {
             len++;
             break ;
@@ -179,7 +179,25 @@ char    *get_from_my_env_list(const char *expandable, t_envs *env_list)
     return (NULL);
 }
 
-int     get_len_of_current_expandable(const char *expandable, t_envs *env_list)
+int     how_many_digits(int number)
+{
+    int digits;
+
+    if (number == 0)
+        return (1);
+    if (number < 0)
+        digits = 1;
+    else
+        digits = 0;
+    while (number > 0)
+    {
+        digits++;
+        number /= 10;
+    }
+    return (digits);
+}
+
+int     get_len_of_current_expandable(const char *expandable, t_envs *env_list, int exit_code)
 {
     char    *test_env;
     char    *real_env;
@@ -190,6 +208,8 @@ int     get_len_of_current_expandable(const char *expandable, t_envs *env_list)
         real_env = get_from_my_env_list(test_env, env_list);
     if (string_compare(test_env, "$"))
         return (get_pid_len());
+    else if (string_compare(test_env, "?"))
+        return (how_many_digits(exit_code));
     return (ft_strlen(real_env));
 }
 
@@ -200,7 +220,7 @@ int     count_valid_characters_after_dollar_sign(const char *curr_expandable)
     i = 1;
     while (curr_expandable[i])
     {
-        if (is_dollar_sign(curr_expandable[i]) && i == 1)
+        if (is_dollar_sign(curr_expandable[i]) || is_question_mark(curr_expandable[i]))
         {
             i++;
             break ;
@@ -212,35 +232,35 @@ int     count_valid_characters_after_dollar_sign(const char *curr_expandable)
     return (i);
 }
 
-void	*ft_memset(void *s, int c, size_t n)
-{
-	unsigned char	*str;
+// void	*ft_memset(void *s, int c, size_t n)
+// {
+// 	unsigned char	*str;
 
-	str = (unsigned char *)s;
-	while (n--)
-		*str++ = c;
-	return (s);
-}
+// 	str = (unsigned char *)s;
+// 	while (n--)
+// 		*str++ = c;
+// 	return (s);
+// }
 
-void	*ft_calloc(size_t nmemb, size_t size)
-{
-	void	*ptr;
+// void	*ft_calloc(size_t nmemb, size_t size)
+// {
+// 	void	*ptr;
 
-	if (nmemb == 0 || size == 0)
-	{
-		ptr = malloc(0);
-		if (!ptr)
-			return (NULL);
-		return (ptr);
-	}
-	if (nmemb > (size_t)-1 / size)
-		return (NULL);
-	ptr = malloc(nmemb * size);
-	if (!ptr)
-		return (NULL);
-	ft_memset(ptr, 0, nmemb * size);
-	return (ptr);
-}
+// 	if (nmemb == 0 || size == 0)
+// 	{
+// 		ptr = malloc(0);
+// 		if (!ptr)
+// 			return (NULL);
+// 		return (ptr);
+// 	}
+// 	if (nmemb > (size_t) - 1 / size)
+// 		return (NULL);
+// 	ptr = malloc(nmemb * size);
+// 	if (!ptr)
+// 		return (NULL);
+// 	ft_memset(ptr, 0, nmemb * size);
+// 	return (ptr);
+// }
 
 int     is_end(const char letter)
 {
@@ -249,7 +269,7 @@ int     is_end(const char letter)
     return (0);
 }
 
-int     get_full_len_of_expandable(t_token curr_token, t_envs *env_list)
+int     get_full_len_of_expandable(t_token curr_token, t_envs *env_list, t_token *tokens)
 {
     int     i;
     int     len;
@@ -264,7 +284,7 @@ int     get_full_len_of_expandable(t_token curr_token, t_envs *env_list)
             quote_counter++;
         if (is_dollar_sign(curr_token.value[i]) && !is_end(curr_token.value[i + 1]) && quote_counter % 2 == 0)
         {
-            len += get_len_of_current_expandable(&curr_token.value[i + 1], env_list);
+            len += get_len_of_current_expandable(&curr_token.value[i + 1], env_list, tokens[0].type);
             i += (count_valid_characters_after_dollar_sign(&curr_token.value[i]));
         }
         else
@@ -284,7 +304,31 @@ void    cat_to_fully_expanded(char *fully_expanded, const char new_letter)
     fully_expanded[index] = new_letter;
 }
 
-void    make_expansion(char *fully_expnaded, const char *mock_expand, int *i, t_envs *env_list)
+char    *ft_itoa(int number)
+{
+    char    *converted;
+    int     num_dup;
+    int     i;
+    
+    i = 0;
+    converted = malloc(sizeof(char) * (how_many_digits(number) + 1));
+    if (!converted)
+        return (NULL);
+    if (number < 0)
+    {
+        converted[i++] = '-';
+        number = -number;
+    }
+    num_dup = number;
+    while (i < how_many_digits(number))
+    {
+        converted[i++] = num_dup % 10 + '0';
+        num_dup /= 10;
+    }
+    return (converted);
+}
+
+void    make_expansion(char *fully_expnaded, const char *mock_expand, t_envs *env_list, int exit_code)
 {
     int     expand_index;
     char    *test_env;
@@ -292,12 +336,13 @@ void    make_expansion(char *fully_expnaded, const char *mock_expand, int *i, t_
 
     env_index = 0;
     expand_index = ft_strlen(fully_expnaded);
-    (*i) += (ft_strlen(mock_expand) + 1);
     test_env = getenv(mock_expand);
     if (!test_env)
         test_env = get_from_my_env_list(mock_expand, env_list);
     if (string_compare(mock_expand, "$"))
         test_env = convert_pid_to_string();
+    else if (string_compare(mock_expand, "?"))
+        test_env = ft_itoa(exit_code);
     if (test_env)
     {
         while (test_env[env_index])
@@ -309,7 +354,7 @@ void    make_expansion(char *fully_expnaded, const char *mock_expand, int *i, t_
     }
 }
 
-char    *get_full_expandable_word(t_token curr_token, t_envs *env_list, int len)
+char    *get_full_expandable_word(t_token curr_token, t_envs *env_list, int len, int exit_code)
 {
     char    *fully_expanded;
     char    *mock_expand;
@@ -328,7 +373,8 @@ char    *get_full_expandable_word(t_token curr_token, t_envs *env_list, int len)
         if (is_dollar_sign(curr_token.value[i]) && !is_end(curr_token.value[i + 1]) && quote_counter % 2 == 0)
         {
             mock_expand = get_valid_expandable(curr_token.value + i + 1);
-            make_expansion(fully_expanded, mock_expand, &i, env_list);
+            make_expansion(fully_expanded, mock_expand, env_list, exit_code);
+            i += (ft_strlen(mock_expand) + 1);
         }
         else
             cat_to_fully_expanded(fully_expanded, curr_token.value[i++]);
