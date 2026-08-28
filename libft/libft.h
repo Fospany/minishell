@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/29 15:09:38 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/06/23 10:11:39 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/28 15:10:00 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,12 @@
 # include <stdlib.h>
 # include <unistd.h>
 
-typedef struct s_list
+typedef struct s_envs
 {
-	void			*content;
-	struct s_list	*next;
-}					t_list;
+    char                *key;
+    char                *value;
+    struct s_envs       *next;
+}						t_envs;
 
 int					ft_isalpha(int c);
 int					ft_isalnum(int c);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split_helpers.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 21:09:28 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/26 12:53:33 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/08/27 09:37:14 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int    set_quote_type(const char letter)
 {
     if (letter == SINGLE_QUOTE)
         return (SINGLE_QUOTE);
-    else if (letter == DOUBLE_QUOTE)
+    else
         return (DOUBLE_QUOTE);
     return (0);
 }

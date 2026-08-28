@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/28 12:57:59 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/08/28 18:29:13 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,50 +291,3 @@ t_token    *minishell(const char *read_line, t_envs *env_list)
 //         return (1);
 //     return (0);
 // }
-int main(int ac, char **av, char **envp)
-{
-	char *line;
-	t_token *tokens;
-	t_envs *global_envs;
-	t_cmds *cmds;
-	(void)ac;
-	(void)av;
-
-	cmds = NULL;
-	global_envs = NULL;
-	if (!put_envp_into_own_env_list((const char **)envp, global_envs))
-	    return (1);
-	while ((line = readline("minishell$ ")))
-	{
-
-		tokens = minishell(line, global_envs);
-		if (!tokens)
-			continue;
-		// int i = 0;
-		// printf("tokens: ");
-		// while (tokens[i].value != NULL)
-		// {
-		// 	printf("%s ", tokens[i].value);
-		// 	i++;
-		// }
-		// printf("\n");
-		cmds = build_cmds(tokens);
-		// t_cmds *tmp = cmds;
-		// while (tmp)
-		// {
-		// 	int i = 0;
-		// 	printf("CMD: ");
-		// 	while(tmp->cmd[i])
-		// 	{
-		// 		printf("%s ",cmds->cmd[i]);
-		// 		i++;
-		// 	}
-		// 	printf("\n");
-		// 	tmp = tmp->next;
-		// }
-		execute_cmds(cmds, envp);
-		if (line[0] != '\0' || !line)
-			add_history(line);
-	}
-    return (0);
-}

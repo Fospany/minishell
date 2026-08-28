@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list_helpers.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dabdulla <dabdulla@student.42vienna.com    +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 13:08:42 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/02/21 15:40:57 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/08/28 16:12:36 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	ft_lstadd_back(t_list **lst, t_list *new_list)
 {
-	t_list	*tmp;
+	t_envs	*tmp;
 
 	if (!new_list || !lst)
 		return ;
@@ -26,18 +26,18 @@ void	ft_lstadd_back(t_list **lst, t_list *new_list)
 	tmp = ft_lstlast(*lst);
 	tmp->next = new_list;
 }
-void	ft_lstdelone(t_list *lst, void (*del)(void *))
+void	ft_lstdelone(t_envs *lst, void (*del)(void *))
 {
     if (!lst || !del)
         return ;
-    del(lst->content);
+    del(lst->value);
     free(lst);
     lst = NULL;
 }
-void	ft_lstclear(t_list **lst, void (*del)(void *))
+void	ft_lstclear(t_envs **lst, void (*del)(void *))
 {
-    t_list *tmp;
-    t_list *next;
+    t_envs *tmp;
+    t_envs *next;
 
     if (!lst || !*lst || !del)
         return ;
@@ -45,33 +45,33 @@ void	ft_lstclear(t_list **lst, void (*del)(void *))
     while (tmp)
     {
         next = tmp->next;
-        del(tmp->content);
+        del(tmp->value);
         free(tmp);
         tmp = next;
     }
     *lst = NULL;
 }
-void	ft_lstiter(t_list *lst, void (*f)(void *))
+void	ft_lstiter(t_envs *lst, void (*f)(void *))
 {
     if(!lst || !f)
         return ;
     while (lst)
     {
-        f(lst->content);
+        f(lst->value);
         lst = lst->next;
     }
 }
-t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
+t_envs	*ft_lstmap(t_envs *lst, void *(*f)(void *), void (*del)(void *))
 {
-    t_list *new_list;
-    t_list *new_node;
-
+    t_envs *new_list;
+    t_envs *new_node;
+    
     new_list = NULL;
     if(!lst || !f || !del)
         return (NULL);
     while (lst)
     {
-        new_node = ft_lstnew(f(lst->content));
+        new_node = ft_lstnew(f(lst->value));
         if (!new_node)
         {
             ft_lstclear(&new_list, del);

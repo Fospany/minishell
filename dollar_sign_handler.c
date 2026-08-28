@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   dollar_sign_handler.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 17:33:26 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/24 13:51:56 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/27 10:59:44 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,23 @@ int     dollar_is_standing_alone(const char letter)
     return (0);
 }
 
+int     is_question_mark_after_dollar(const char letter)
+{
+    if (letter == QUESTION_MARK)
+        return (1);
+    return (0);
+}
+
 int     is_dollar_after_dollar(const char letter)
 {
     if (letter == DOLLAR_SIGN)
+        return (1);
+    return (0);
+}
+
+int     is_question_mark(const char letter)
+{
+    if (letter == QUESTION_MARK)
         return (1);
     return (0);
 }
@@ -63,9 +77,9 @@ int    dollar_sign_exception(const char *read_line, int *i, int *words)
     if (is_dollar_sign(read_line[*i]))
     {
         if (is_dollar_after_dollar(read_line[(*i) + 1]))
-        {
             (*i) += 2;
-        }
+        else if (is_question_mark_after_dollar(read_line[(*i) + 1]))
+            (*i) += 2;
         else if (dollar_is_standing_alone(read_line[(*i) + 1]))
         {
             (*words)++;
