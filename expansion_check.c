@@ -6,22 +6,22 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:53:31 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/08/25 17:15:17 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/26 12:49:02 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int     ft_strlen(const char *s)
-{
-    int i;
+// int     ft_strlen(const char *s)
+// {
+//     int i;
 
-//     i = 0;
-//     if (!s)
-//         return (i);
-//     while (s[i])
-//         i++;
-//     return (i);
+// //     i = 0;
+// //     if (!s)
+// //         return (i);
+// //     while (s[i])
+// //         i++;
+// //     return (i);
 // }
 
 int     dollar_in_word(char *word)
@@ -138,7 +138,7 @@ int     get_len_of_valid_expandable(const char *expandable)
     len = 0;
     while (expandable[len])
     {
-    
+
         if (is_dollar_sign(expandable[0]))
         {
             len++;

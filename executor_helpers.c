@@ -6,7 +6,7 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/22 10:02:58 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/07/29 13:29:44 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/08/28 13:02:56 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	wait_pids(t_cmds *cmds, int *status)
 	while (cmds)
 	{
 		if (cmds->pid > 0)
-			waitpid(cmds->pid, status, 0);
+			wait_single_pid(cmds->pid, status);
 		cmds = cmds->next;
 	}
 }

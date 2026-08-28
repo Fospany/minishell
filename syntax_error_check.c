@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 16:08:24 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/25 16:44:30 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/27 10:40:10 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int     syntax_error_message_display(char *token_value)
         printf("minishell: syntax error near the token `newline'\n");
     else
         printf("minishell: syntax error near the token `%s'\n", token_value);
-    return (1);   
+    return (1);
 }
 
 
@@ -57,7 +57,7 @@ int heredoc_check(t_token *tokens, int i)
 int syntax_check(t_token *tokens)
 {
     int i;
-    
+
     i = 0;
     while (tokens[i].value)
     {

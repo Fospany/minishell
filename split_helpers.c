@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 21:09:28 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/24 13:58:51 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/08/26 12:53:33 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int    set_quote_type(const char letter)
         return (SINGLE_QUOTE);
     else if (letter == DOUBLE_QUOTE)
         return (DOUBLE_QUOTE);
+    return (0);
 }
 
 int check_for_quote(const char letter, int *quote_type)
@@ -50,7 +51,7 @@ int word_counter(const char *read_line)
 {
     int i;
     int words;
-    
+
     words = 0;
     i = 0;
     while (read_line[i])

@@ -19,5 +19,9 @@ this fixed an issue where the > would only append >> so i added a check to see i
 delete maini.c
 Problems.md
 
+2: Syntax error
 127: Command not found (or no such file or directory)
 126: Permission denied (or is a directory)
+130: Killed by sigint
+131: killed by sigquit
+need to handle expansions in heredoc

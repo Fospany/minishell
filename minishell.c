@@ -6,11 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2026/07/29 12:22:13 by dabdulla         ###   ########.fr       */
-=======
-/*   Updated: 2026/08/26 12:14:12 by guthybarnak      ###   ########.fr       */
->>>>>>> e20ff6160b591795556847ceb6c13f07a1c31125
+/*   Updated: 2026/08/28 12:57:59 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +26,7 @@
 // #include "is_special_character.c"
 // #include "special_characters_checkers.c"
 // #include "word_count_helpers.c"
+
 
 int     determine_quote_type(char letter, int quote_type)
 {
@@ -89,16 +86,11 @@ char    *get_rid_of_them_quotes(t_token *tokens, int i)
     int     quote_type;
     int     local_index;
     char    *new_word;
-    
+
     quote_type = 0;
     j = 0;
     local_index = 0;
-<<<<<<< HEAD
-    (void) token;
-    new_word = malloc(sizeof(char) * (count_valid_char(word)) + 1);
-=======
     new_word = malloc(sizeof(char) * (count_valid_char(tokens[i].value) + 1));
->>>>>>> e20ff6160b591795556847ceb6c13f07a1c31125
     if (!new_word)
         return (NULL);
     while (tokens[i].value[j])
@@ -135,8 +127,8 @@ void    remove_quotes(t_token *tokens)
         i++;
         j = 0;
     }
-    
-    
+
+
 }
 
 int     number_of_valid_tokens(t_token *tokens)
@@ -170,19 +162,19 @@ void    copy_key(const char *envp, char *new_key)
 char    *insert_key(const char *envp)
 {
     char    *new_key;
-    
+
     new_key = malloc(sizeof(char) * (key_counter(envp) + 1));
     if (!new_key)
         return (NULL);
     copy_key(envp, new_key);
-    return (new_key);   
+    return (new_key);
 }
 
 void    copy_value(const char *envp, char *new_value)
 {
     int i;
     int j;
-    
+
     i = 0;
     j = 0;
     while (envp[i] != EQUAL_SIGN)
@@ -242,6 +234,7 @@ int     get_len_of_envp(const char **envp)
 {
     int i;
 
+    i = 0;
     while (envp[i])
         i++;
     return (i);
@@ -262,11 +255,9 @@ int     put_envp_into_own_env_list(const char **envp, t_envs *env_list)
 
 t_token    *minishell(const char *read_line, t_envs *env_list)
 {
-    // int     i;
     t_token *tokens;
     char    **split_line;
 
-    // i = 0;
     if(*read_line == '\0')
    		return (NULL);
     split_line = split_read_line(read_line);
@@ -276,44 +267,74 @@ t_token    *minishell(const char *read_line, t_envs *env_list)
     env_list = env_list_addition(tokens, env_list);
     handle_expansions(env_list, tokens);
     remove_quotes(tokens);
-    while (split_line[i])
-    {
-        printf("type: %i, value: %s\n", tokens[i].type, tokens[i].value);
-        i++;
-    }
+    // int i = 0;
+    // while (split_line[i])
+    // {
+    //     printf("type: %i, value: %s\n", tokens[i].type, tokens[i].value);
+    //     i++;
+    // }
     if (syntax_check(tokens))
         return (NULL);
     return (tokens);
 }
 
-int main(int args, char **argv, const char **envp)
-{
-    t_token    *okcso;
-    t_envs  *global_env_list;
+// int main(int args, char **argv, const char **envp)
+// {
+//     t_token    *okcso;
+//     t_envs  *global_env_list;
 
-<<<<<<< HEAD
-	global_env_list = NULL;
+//     global_env_list = NULL;
+//     if (!put_envp_into_own_env_list(envp, global_env_list))
+//         return (1);
+//     okcso = minishell("'$T'E$R'M'", global_env_list);
+//     if (!okcso)
+//         return (1);
+//     return (0);
+// }
+int main(int ac, char **av, char **envp)
+{
+	char *line;
+	t_token *tokens;
+	t_envs *global_envs;
+	t_cmds *cmds;
+	(void)ac;
+	(void)av;
+
 	cmds = NULL;
-	exit_status = 0;
+	global_envs = NULL;
+	if (!put_envp_into_own_env_list((const char **)envp, global_envs))
+	    return (1);
 	while ((line = readline("minishell$ ")))
 	{
-		tokens = minishell(line, global_env_list);
+
+		tokens = minishell(line, global_envs);
 		if (!tokens)
 			continue;
+		// int i = 0;
+		// printf("tokens: ");
+		// while (tokens[i].value != NULL)
+		// {
+		// 	printf("%s ", tokens[i].value);
+		// 	i++;
+		// }
+		// printf("\n");
 		cmds = build_cmds(tokens);
+		// t_cmds *tmp = cmds;
+		// while (tmp)
+		// {
+		// 	int i = 0;
+		// 	printf("CMD: ");
+		// 	while(tmp->cmd[i])
+		// 	{
+		// 		printf("%s ",cmds->cmd[i]);
+		// 		i++;
+		// 	}
+		// 	printf("\n");
+		// 	tmp = tmp->next;
+		// }
 		execute_cmds(cmds, envp);
 		if (line[0] != '\0' || !line)
 			add_history(line);
 	}
-    return (exit_status);
-}
-=======
-    global_env_list = NULL;
-    if (!put_envp_into_own_env_list(envp, global_env_list))
-        return (1);
-    okcso = minishell("'$T'E$R'M'", global_env_list);
-    if (!okcso)
-        return (1);
     return (0);
 }
->>>>>>> e20ff6160b591795556847ceb6c13f07a1c31125

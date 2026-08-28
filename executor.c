@@ -6,7 +6,7 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 09:57:52 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/07/29 13:56:57 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/08/28 13:03:04 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	execute_cmds(t_cmds *cmds, char **envp)
 	tmp = cmds;
 	if (!cmds->next)
 	{
-		single_built_in(cmds, envp, &status);
+		execute_single_cmd(cmds, envp, &status);
 		clean_parent(cmds,fd, &stored_input);
 		return (status);
 	}
@@ -44,13 +44,13 @@ int	execute_cmds(t_cmds *cmds, char **envp)
 	return (status);
 }
 
-int	single_built_in(t_cmds *cmds, char **envp, int *status)
+int	execute_single_cmd(t_cmds *cmds, char **envp, int *status)
 {
 	int	saved_stdin;
 	int	saved_stdout;
 
 	if (!cmds->cmd)
-		return (0);
+		return (1);
 	if (cmds->fd_in == -1 || cmds->fd_out == -1)
 		return (1);
 	if (is_built_in(cmds->cmd[0]))
@@ -66,13 +66,11 @@ int	single_built_in(t_cmds *cmds, char **envp, int *status)
 		}
 		*status = run_built_in(cmds, envp);
 		restore_io(saved_stdin, saved_stdout);
+		return (1);
 	}
-	else
-	{
-		if (!run_cmd(cmds, envp, status))
-			return (0);
-	}
-	return (0);
+	if (!run_cmd(cmds, envp, status))
+		return (0);
+	return (1);
 }
 
 int	run_cmd(t_cmds *cmd, char **envp, int *status)
@@ -83,7 +81,10 @@ int	run_cmd(t_cmds *cmd, char **envp, int *status)
 		return (0);
 	path = handling_path(cmd->cmd[0], envp[find_path(envp)]);
 	if (!path)
+	{
+		*status = 127;
 		return (0);
+	}
 	cmd->pid = fork();
 	if (cmd->pid == -1)
 		return (print_error(strerror(errno), cmd->cmd[0], 2), 0);
@@ -100,10 +101,24 @@ int	run_cmd(t_cmds *cmd, char **envp, int *status)
 			close(cmd->fd_out);
 		}
 		execve(path, cmd->cmd, envp);
+		print_error(strerror(errno), cmd->cmd[0], 2);
 		exit(1);
 	}
-	waitpid(cmd->pid, status, 0);
+	// waitpid(cmd->pid, status, 0);
+	wait_single_pid(cmd->pid, status);
 	return (1);
+}
+
+void wait_single_pid(pid_t pid, int *status)
+{
+	if (pid > 0)
+	{
+		waitpid(pid, status, 0);
+		if (WIFEXITED(*status))
+			*status = WEXITSTATUS(*status);
+		else if(WIFSIGNALED(*status))
+			*status = 128 + WTERMSIG(*status);
+	}
 }
 
 void	run_child(t_cmds *cmds, int *fd, int stored_input, char **envp)
@@ -121,7 +136,6 @@ void	run_child(t_cmds *cmds, int *fd, int stored_input, char **envp)
 	path = handling_path(cmds->cmd[0], envp[find_path(envp)]);
 	if (!path)
 		exit(127);
-	path = NULL;
 	execve(path, cmds->cmd, envp);
 	print_error(strerror(errno), cmds->cmd[0], 2);
 	exit(1);
