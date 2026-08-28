@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/27 17:10:41 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/08/28 17:45:36 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,6 @@ typedef enum e_token_type
     token_env_assign
 }   t_token_type;
 
-typedef struct s_envs
-{
-    char                *key;
-    char                *value;
-    struct s_envs       *next;
-}                       t_envs;
-
 typedef struct s_token
 {
     const char            *value;
@@ -95,7 +88,7 @@ int     is_redir_or_pipe(const char letter);
 int     quote_in_word(const char *read_line, int *i, int *words);
 int     syntax_error_message_display(const char *token_value);
 int     is_dollar_sign(const char letter);
-int     ft_strlen(const char *s);
+//int     ft_strlen(const char *s);
 int     is_pipe(const char letter);
 int     syntax_check(t_token *tokens);
 int     skip_to_next_dollar_sign(char *expandable);
@@ -127,6 +120,11 @@ void    copy_till_next_quote(const char *read_line, int *i, char *new_word, int 
 int     is_valid_after_dollar_sign(const char letter);
 int     dollar_ended_naturally(const char *read_line, int i);
 int     is_question_mark(const char letter);
-
+t_envs  *copy_from_envp_to_own_env_list(const char **envp, int i);
+void    add_env_assign_to_list(t_envs **my_list, t_token token);
+int     value_counter(const char *envp);
+int     number_of_env_variables(t_token *token);
+int     is_quote(const char letter);
+int     add_env_variables_to_env_list(t_envs *env_list, t_token *tokens);
 
 #endif

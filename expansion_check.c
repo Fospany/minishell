@@ -6,23 +6,23 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:53:31 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/08/27 13:26:45 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/08/28 14:12:43 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int     ft_strlen(const char *s)
-{
-    int i;
+// int     ft_strlen(const char *s)
+// {
+//     int i;
 
-    i = 0;
-    if (!s)
-        return (i);
-    while (s[i])
-        i++;
-    return (i);
-}
+//     i = 0;
+//     if (!s)
+//         return (i);
+//     while (s[i])
+//         i++;
+//     return (i);
+// }
 
 int     dollar_in_word(const char *word)
 {
@@ -232,35 +232,35 @@ int     count_valid_characters_after_dollar_sign(const char *curr_expandable)
     return (i);
 }
 
-void	*ft_memset(void *s, int c, size_t n)
-{
-	unsigned char	*str;
+// void	*ft_memset(void *s, int c, size_t n)
+// {
+// 	unsigned char	*str;
 
-	str = (unsigned char *)s;
-	while (n--)
-		*str++ = c;
-	return (s);
-}
+// 	str = (unsigned char *)s;
+// 	while (n--)
+// 		*str++ = c;
+// 	return (s);
+// }
 
-void	*ft_calloc(size_t nmemb, size_t size)
-{
-	void	*ptr;
+// void	*ft_calloc(size_t nmemb, size_t size)
+// {
+// 	void	*ptr;
 
-	if (nmemb == 0 || size == 0)
-	{
-		ptr = malloc(0);
-		if (!ptr)
-			return (NULL);
-		return (ptr);
-	}
-	if (nmemb > (size_t)-1 / size)
-		return (NULL);
-	ptr = malloc(nmemb * size);
-	if (!ptr)
-		return (NULL);
-	ft_memset(ptr, 0, nmemb * size);
-	return (ptr);
-}
+// 	if (nmemb == 0 || size == 0)
+// 	{
+// 		ptr = malloc(0);
+// 		if (!ptr)
+// 			return (NULL);
+// 		return (ptr);
+// 	}
+// 	if (nmemb > (size_t) - 1 / size)
+// 		return (NULL);
+// 	ptr = malloc(nmemb * size);
+// 	if (!ptr)
+// 		return (NULL);
+// 	ft_memset(ptr, 0, nmemb * size);
+// 	return (ptr);
+// }
 
 int     is_end(const char letter)
 {
