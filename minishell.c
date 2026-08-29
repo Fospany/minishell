@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/28 18:13:44 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/08/29 10:57:23 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,8 @@
 // #include "is_special_character.c"
 // #include "special_characters_checkers.c"
 // #include "word_count_helpers.c"
-// #include "libft/list_general.c"
-// #include "libft/list_helpers.c"
-// #include "libft/ft_calloc.c"
-// #include "libft/ft_strlen.c"
-// #include "libft/ft_bzero.c"
-// #include "libft/ft_memset.c"
+
+volatile sig_atomic_t g_signal = 0;
 
 int     determine_quote_type(char letter, int quote_type)
 {
@@ -91,7 +87,7 @@ char    *get_rid_of_them_quotes(t_token *tokens, int i)
     int     quote_type;
     int     local_index;
     char    *new_word;
-    
+
     quote_type = 0;
     j = 0;
     local_index = 0;
@@ -150,19 +146,19 @@ void    copy_key(const char *envp, char *new_key)
 char    *insert_key(const char *envp)
 {
     char    *new_key;
-    
+
     new_key = malloc(sizeof(char) * (key_counter(envp) + 1));
     if (!new_key)
         return (NULL);
     copy_key(envp, new_key);
-    return (new_key);   
+    return (new_key);
 }
 
 void    copy_value(const char *envp, char *new_value)
 {
     int i;
     int j;
-    
+
     i = 0;
     j = 0;
     while (envp[i] != EQUAL_SIGN)
@@ -228,7 +224,7 @@ void    add_envp_to_list(t_envs **my_list, const char **envp)
 t_envs     *copy_from_envp_to_own_env_list(const char **envp, int i)
 {
     t_envs *new_node;
-    
+
     new_node = malloc(sizeof(t_envs));
     new_node->key = insert_key(envp[i]);
     new_node->value = insert_value(envp[i]);
@@ -253,23 +249,25 @@ t_token    *minishell(const char *read_line, t_envs *env_list)
     char    **split_line;
 
     i = 0;
+    if(*read_line == '\0')
+   		return (NULL);
     split_line = split_read_line(read_line);
-    printf("%i\n", word_counter(read_line));
+    // printf("%i\n", word_counter(read_line));
     tokens = malloc(sizeof(t_token) * (word_counter(read_line) + 2));
     create_token_struct(tokens, split_line);
     add_env_variables_to_env_list(env_list, tokens);
     handle_expansions(env_list, tokens);
     remove_quotes(tokens);
-    while (split_line[i])
-    {
-        printf("type: %i, value: %s\n", tokens[i + 1].type, tokens[i + 1].value);
-        i++;
-    }
-    while (env_list->next != NULL)
-    {
-        printf("%s=%s\n", env_list->key, env_list->value);
-        env_list = env_list->next;
-    }
+    // while (split_line[i])
+    // {
+    //     printf("type: %i, value: %s\n", tokens[i + 1].type, tokens[i + 1].value);
+    //     i++;
+    // }
+    // while (env_list->next != NULL)
+    // {
+    //     printf("%s=%s\n", env_list->key, env_list->value);
+    //     env_list = env_list->next;
+    // }
     if (syntax_check(tokens))
         return (NULL);
     return (tokens);
@@ -283,20 +281,58 @@ void    do_nothing_int(int n)
 void    do_nothing_ptr(char **ptr)
 {
     ptr[0][0] = 0;
-    
+
 }
 
-int main(int args, char **argv, const char **envp)
-{
-    t_token    *okcso;
-    t_envs     *env_list;
+// int old_main(int args, char **argv, const char **envp)
+// {
+//     t_token    *okcso;
+//     t_envs     *env_list;
 
-    env_list = NULL;
-    do_nothing_int(args);
-    do_nothing_ptr(argv);
-    add_envp_to_list(&env_list, envp);
-    okcso = minishell("here=fasz", env_list);
-    if (!okcso)
-        return (1);
+//     env_list = NULL;
+//     do_nothing_int(args);
+//     do_nothing_ptr(argv);
+//     add_envp_to_list(&env_list, envp);
+//     okcso = minishell("here=fasz", env_list);
+//     if (!okcso)
+//         return (1);
+//     return (0);
+// }
+
+int main(int ac, char **av, char **envp)
+{
+	char *line;
+	int status;
+	t_token *tokens;
+	t_envs *global_envs;
+	t_cmds *cmds;
+	(void)ac;
+	(void)av;
+
+	cmds = NULL;
+	global_envs = NULL;
+	status = 0;
+	add_envp_to_list(&global_envs, envp);
+	init_interactive_signals();
+	while ((line = readline("minishell$ ")))
+	{
+		if (!ft_strncmp(line, "exitcode", 8))
+		{
+			printf("%d\n", status);
+			continue;
+		}
+		tokens = minishell(line, global_envs);
+		if (!tokens)
+			continue;
+		cmds = build_cmds(tokens);
+		if (!cmds)
+		{
+			status = 1;
+			continue;
+		}
+		status = execute_cmds(cmds, envp);
+		if (line[0] != '\0' || !line)
+			add_history(line);
+	}
     return (0);
 }

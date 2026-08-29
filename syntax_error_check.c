@@ -18,7 +18,7 @@ int     syntax_error_message_display(const char *token_value)
         printf("minishell: syntax error near the token `newline'\n");
     else
         printf("minishell: syntax error near the token `%s'\n", token_value);
-    return (1);   
+    return (1);
 }
 
 

@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/26 12:53:31 by guthybarnak       #+#    #+#             */
-/*   Updated: 2026/08/28 14:12:43 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/08/28 18:28:32 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@
 // {
 //     int i;
 
-//     i = 0;
-//     if (!s)
-//         return (i);
-//     while (s[i])
-//         i++;
-//     return (i);
+// //     i = 0;
+// //     if (!s)
+// //         return (i);
+// //     while (s[i])
+// //         i++;
+// //     return (i);
 // }
 
 int     dollar_in_word(const char *word)
@@ -110,7 +110,7 @@ void    handle_expansions(t_envs *env_list, t_token *tokens)
 {
     int i;
     int len;
-    
+
     i = 1;
     len = 0;
     while (tokens[i].value)
@@ -138,7 +138,7 @@ int     get_len_of_valid_expandable(const char *expandable)
     len = 0;
     while (expandable[len])
     {
-    
+
         if (is_dollar_sign(expandable[len]) || is_question_mark(expandable[len]))
         {
             len++;
@@ -309,7 +309,7 @@ char    *ft_itoa(int number)
     char    *converted;
     int     num_dup;
     int     i;
-    
+
     i = 0;
     converted = malloc(sizeof(char) * (how_many_digits(number) + 1));
     if (!converted)

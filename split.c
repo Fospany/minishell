@@ -187,9 +187,9 @@ char    **allocating_double_pointer(const char *read_line)
 {
     int     words;
     char    **split_line;
-    
+
     words = word_counter(read_line);
-    split_line = malloc(sizeof(char *) * (words + 1));
+    split_line = malloc(sizeof(char *) * (words + 2));
     return (split_line);
 }
 
@@ -214,10 +214,9 @@ void    fill_up_double_pointer(char **split_line, const char *read_line)
 char    **split_read_line(const char *read_line)
 {
     char    **split_line;
-
     split_line = allocating_double_pointer(read_line);
     if (!split_line)
         return (NULL);
     fill_up_double_pointer(split_line, read_line);
-    return (split_line);
+   return (split_line);
 }

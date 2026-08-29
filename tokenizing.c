@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 17:13:55 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/27 10:00:00 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/08/28 19:56:50 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,16 +44,16 @@ const char    *create_exit_code()
 void    create_token_struct(t_token *tokens, char **line)
 {
     int i;
-    
+
     i = 0;
-    tokens[i].value = create_exit_code();
-    tokens[i].type = EXIT_SUCCESS;
+    // tokens[i].value = create_exit_code();
+    // tokens[i].type = EXIT_SUCCESS;
     while (line[i])
     {
-        tokens[i + 1].value = line[i];
-        tokens[i + 1].type = tokenizer(line[i]);
+        tokens[i].value = line[i];
+        tokens[i].type = tokenizer(line[i]);
         i++;
     }
-    tokens[i + 1].value = NULL;
-    tokens[i + 1].type = -1;
+    tokens[i].value = NULL;
+    tokens[i].type = -1;
 }

@@ -1,0 +1,70 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   built_in_executor.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/07/28 11:15:38 by dabdulla          #+#    #+#             */
+/*   Updated: 2026/08/28 12:53:30 by dabdulla         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+
+int	is_built_in(char *cmd)
+{
+	int		i;
+	char	**bi;
+
+	if (!cmd)
+		return (0);
+	i = 0;
+	bi = (char *[]){"echo", "cd", "pwd", "export", "unset", "env", "exit",
+		NULL};
+	while (bi[i])
+	{
+		if (ft_strlen(bi[i]) == ft_strlen(cmd) && (ft_strncmp(bi[i], cmd,
+					ft_strlen(bi[i])) == 0))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int	run_built_in(t_cmds *cmd, char **envp)
+{
+	int	cmd_len;
+
+	(void)envp;
+	cmd_len = ft_strlen(cmd->cmd[0]);
+	if (cmd_len == 3 && ft_strncmp(cmd->cmd[0], "pwd", 3) == 0)
+		return (pwd());
+	if (cmd_len == 4 && ft_strncmp(cmd->cmd[0], "echo", 4) == 0)
+		return (echo(cmd));
+	return (0);
+}
+
+int	change_io(t_cmds *cmds)
+{
+	int	return_value;
+
+	return_value = 0;
+	if (cmds->fd_in != 0)
+	{
+		if (dup2(cmds->fd_in, STDIN_FILENO) == -1)
+		{
+			return_value = 1;
+			perror("minishell");
+		}
+	}
+	if (cmds->fd_out != 1)
+	{
+		if (dup2(cmds->fd_out, STDOUT_FILENO) == -1)
+		{
+			return_value = 1;
+			perror("minishell");
+		}
+	}
+	return (return_value);
+}

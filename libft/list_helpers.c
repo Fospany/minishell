@@ -12,19 +12,19 @@
 
 #include "libft.h"
 
-void	ft_lstadd_back(t_envs **lst, t_envs *new)
+void	ft_lstadd_back(t_list **lst, t_list *new_list)
 {
 	t_envs	*tmp;
 
-	if (!new || !lst)
+	if (!new_list || !lst)
 		return ;
 	if (!*lst)
 	{
-		*lst = new;
+		*lst = new_list;
         return ;
 	}
 	tmp = ft_lstlast(*lst);
-	tmp->next = new;
+	tmp->next = new_list;
 }
 void	ft_lstdelone(t_envs *lst, void (*del)(void *))
 {

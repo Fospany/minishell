@@ -18,6 +18,7 @@ int    set_quote_type(const char letter)
         return (SINGLE_QUOTE);
     else
         return (DOUBLE_QUOTE);
+    return (0);
 }
 
 int check_for_quote(const char letter, int *quote_type)
@@ -50,7 +51,7 @@ int word_counter(const char *read_line)
 {
     int i;
     int words;
-    
+
     words = 0;
     i = 0;
     while (read_line[i])

@@ -15,7 +15,7 @@
 int string_compare(const char *string1, const char *string2)
 {
     int i;
-    
+
     i = 0;
     while (string1[i] || string2[i])
     {
@@ -23,5 +23,7 @@ int string_compare(const char *string1, const char *string2)
             return (0);
         i++;
     }
-    return (1);
+    if (string1[i] == '\0' && string2[i] == '\0')
+   		return (1);
+    return (0);
 }

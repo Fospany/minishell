@@ -1,5 +1,5 @@
 NAME = minishell
-
+OBJDIR = obj
 SOURCE =	split.c \
 			minishell.c \
 			split_helpers.c \
@@ -16,37 +16,52 @@ SOURCE =	split.c \
 			special_characters_checkers.c \
 			tokenizing.c \
 			word_count_helpers.c \
+			path_handler.c \
+			path_handler_helpers.c \
+			cmd_list.c \
+			cmd_list_helpers.c \
+			redirections.c \
+			executor.c \
+			executor_helpers.c \
+			built_in_executor.c \
+			built_in_executor_helper.c \
+			signals.c \
+			pwd.c \
+			echo.c
 
 
 
-CFLAGS = -Wall -Wextra -Werror -g
-READLINE_FLAG = -lreadline
+# CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -I/opt/homebrew/opt/readline/include
+READLINE_FLAG = -L/opt/homebrew/opt/readline/lib -lreadline
+
 
 CC = cc
 
 LIBFT_DIR = libft
 LIBFT = ${LIBFT_DIR}/libft.a
 
-OBJECTS = $(SOURCE:.c=.o)
+OBJECTS = $(SOURCE:%.c=$(OBJDIR)/%.o)
 
 all: $(NAME)
 
-%.o: %.c
+$(OBJDIR)/%.o: %.c
+	@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(LIBFT):
 	@make -C $(LIBFT_DIR)
 
 $(NAME) : $(OBJECTS) $(LIBFT)
-	$(CC) $(CFLAGS) $(SOURCE) $(LIBFT) -o $(NAME) $(READLINE_FLAG)
+	$(CC) $(CFLAGS) $(OBJECTS) $(LIBFT) -o $(NAME) $(READLINE_FLAG)
 
 clean:
 	@make -C $(LIBFT_DIR) clean
-	rm -f $(OBJECTS)
+	rm -rf $(OBJDIR)
 
 fclean:
 	@make -C $(LIBFT_DIR) fclean
-	rm -f $(OBJECTS)
+	rm -rf $(OBJDIR)
 	rm -f $(NAME)
 
 re: fclean all
