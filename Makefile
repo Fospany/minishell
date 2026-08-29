@@ -25,13 +25,16 @@ SOURCE =	split.c \
 			executor_helpers.c \
 			built_in_executor.c \
 			built_in_executor_helper.c \
+			signals.c \
 			pwd.c \
 			echo.c
 
 
 
-CFLAGS = -Wall -Wextra -Werror -g
-READLINE_FLAG = -lreadline
+# CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -I/opt/homebrew/opt/readline/include
+READLINE_FLAG = -L/opt/homebrew/opt/readline/lib -lreadline
+
 
 CC = cc
 

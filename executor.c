@@ -6,7 +6,7 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/18 09:57:52 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/08/28 13:03:04 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/08/29 11:14:33 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int	execute_cmds(t_cmds *cmds, char **envp)
 		clean_parent(cmds,fd, &stored_input);
 		return (status);
 	}
+	pause_interactive_signals();
 	while (cmds)
 	{
 		if (!fork_pipe(cmds, fd, &stored_input, envp))
@@ -41,6 +42,7 @@ int	execute_cmds(t_cmds *cmds, char **envp)
 		cmds = cmds->next;
 	}
 	wait_pids(tmp, &status);
+	init_interactive_signals();
 	return (status);
 }
 
@@ -79,17 +81,15 @@ int	run_cmd(t_cmds *cmd, char **envp, int *status)
 
 	if (!cmd->cmd || !cmd->cmd[0])
 		return (0);
-	path = handling_path(cmd->cmd[0], envp[find_path(envp)]);
+	path = handling_path(cmd->cmd[0], envp[find_path(envp)], status);
 	if (!path)
-	{
-		*status = 127;
 		return (0);
-	}
 	cmd->pid = fork();
 	if (cmd->pid == -1)
 		return (print_error(strerror(errno), cmd->cmd[0], 2), 0);
 	if (cmd->pid == 0)
 	{
+		init_execution_signals();
 		if (cmd->fd_in != 0)
 		{
 			safe_dup2(cmd->fd_in, STDIN_FILENO);
@@ -104,12 +104,13 @@ int	run_cmd(t_cmds *cmd, char **envp, int *status)
 		print_error(strerror(errno), cmd->cmd[0], 2);
 		exit(1);
 	}
-	// waitpid(cmd->pid, status, 0);
-	wait_single_pid(cmd->pid, status);
+	pause_interactive_signals();
+	wait_single_pid(cmd->pid, status, 1);
+	init_interactive_signals();
 	return (1);
 }
 
-void wait_single_pid(pid_t pid, int *status)
+void wait_single_pid(pid_t pid, int *status, int last_pid)
 {
 	if (pid > 0)
 	{
@@ -117,14 +118,22 @@ void wait_single_pid(pid_t pid, int *status)
 		if (WIFEXITED(*status))
 			*status = WEXITSTATUS(*status);
 		else if(WIFSIGNALED(*status))
+		{
+			if (WTERMSIG(*status) == SIGQUIT && last_pid)
+				printf("Quit: 3\n");
+			else if(WTERMSIG(*status) == SIGINT && last_pid)
+				printf("\n");
 			*status = 128 + WTERMSIG(*status);
+		}
 	}
 }
 
 void	run_child(t_cmds *cmds, int *fd, int stored_input, char **envp)
 {
 	char	*path;
+	int exit_status;
 
+	exit_status = 0;
 	if (!cmds->cmd || !cmds->cmd[0])
 		exit(0);
 	if (cmds->fd_in == -1 || cmds->fd_out == -1)
@@ -133,9 +142,9 @@ void	run_child(t_cmds *cmds, int *fd, int stored_input, char **envp)
 	close_inherited_fds(cmds);
 	if (is_built_in(cmds->cmd[0]))
 		exit(run_built_in(cmds, envp));
-	path = handling_path(cmds->cmd[0], envp[find_path(envp)]);
+	path = handling_path(cmds->cmd[0], envp[find_path(envp)], &exit_status);
 	if (!path)
-		exit(127);
+		exit(exit_status);
 	execve(path, cmds->cmd, envp);
 	print_error(strerror(errno), cmds->cmd[0], 2);
 	exit(1);
@@ -150,6 +159,9 @@ static int	fork_pipe(t_cmds *cmds, int *fd, int *stored_input, char **envp)
 	}
 	cmds->pid = fork();
 	if (cmds->pid == 0)
+	{
+		init_execution_signals();
 		run_child(cmds, fd, *stored_input, envp);
+	}
 	return (1);
 }

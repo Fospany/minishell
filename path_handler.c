@@ -6,7 +6,7 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/26 18:53:03 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/07/28 11:26:44 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/08/29 11:11:38 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 static void	print_status(int status, char *cmd);
 static char	*format_path(char *cmd_name, char *path);
+void assign_exit_status(int status, int *exit_status);
 
-char	*handling_path(char *cmd_name, char *path)
+char	*handling_path(char *cmd_name, char *path, int *exit_status)
 {
 	char	**split_path;
 	char	*cmd_path;
@@ -32,6 +33,7 @@ char	*handling_path(char *cmd_name, char *path)
 			return (NULL);
 		if (status == 3)
 			return (cmd_path);
+		assign_exit_status(status, exit_status);
 		return (print_status(status, cmd_name), free(cmd_path), NULL);
 	}
 	split_path = ft_split(path, ':');
@@ -40,8 +42,16 @@ char	*handling_path(char *cmd_name, char *path)
 	cmd_path = find_cmd_path(cmd_name, split_path, &status);
 	free_split(split_path);
 	if (!cmd_path)
-		return (print_status(status, cmd_name), NULL);
+		return (print_status(status, cmd_name), assign_exit_status(status, exit_status), NULL);
 	return (cmd_path);
+}
+
+void assign_exit_status(int status, int *exit_status)
+{
+	if (status == 1 || status == 2)
+		*exit_status = 126;
+	else
+		*exit_status = 127;
 }
 
 void	free_split(char **strs)

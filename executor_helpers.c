@@ -6,7 +6,7 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/22 10:02:58 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/08/28 13:02:56 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/08/29 10:31:16 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,15 @@ void	clean_parent(t_cmds *cmds, int *fd, int *stored_input)
 
 void	wait_pids(t_cmds *cmds, int *status)
 {
+	int last_pid;
+
+	last_pid = 0;
 	while (cmds)
 	{
+		if (cmds->next == NULL)
+			last_pid = 1;
 		if (cmds->pid > 0)
-			wait_single_pid(cmds->pid, status);
+			wait_single_pid(cmds->pid, status, last_pid);
 		cmds = cmds->next;
 	}
 }

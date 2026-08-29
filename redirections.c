@@ -6,7 +6,7 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/28 10:32:32 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/07/29 13:36:54 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/08/29 10:50:36 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,11 +83,25 @@ static void	fill_heredoc(int write_fd, char *eof)
 int	handle_heredoc(t_cmds *curr, t_token *token, int *i)
 {
 	int	fd[2];
+	pid_t pid;
+	int status;
 
+	status = 0;
 	if (pipe(fd) == -1)
 		return (perror("minishell"), 0);
-	fill_heredoc(fd[1], token[*i + 1].value);
+	pause_interactive_signals();
+	pid = fork();
+	if (pid == 0)
+	{
+		init_execution_signals();
+		fill_heredoc(fd[1], token[*i + 1].value);
+		exit(0);
+	}
 	close(fd[1]);
+	wait_single_pid(pid, &status, 1);
+	init_interactive_signals();
+	if (status == 130)
+		return (0);
 	if (curr->fd_in != 0)
 		close(curr->fd_in);
 	curr->fd_in = fd[0];
