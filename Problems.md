@@ -28,7 +28,7 @@ Problems, tests and TO-DOs
 - [ ] properly handle $EMPTY_VAR
 - [ ] test heredoc with quotes and everything
 - [ ] finish built-ins
-- [ ] handle $?
+- [x] handle $?
 - [ ] valgrind/funcheck
 - [ ] run testers
 - [ ] cleanup the directoryies and check for leftover files

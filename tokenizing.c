@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 17:13:55 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/28 19:56:50 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/09/02 16:28:26 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,19 +41,49 @@ const char    *create_exit_code()
     return (exit_code);
 }
 
-void    create_token_struct(t_token *tokens, char **line)
+char    *normal_copy(const char *get_copied)
+{
+    int     i;
+    char    *new_word;
+    
+    i = 0;
+    new_word = malloc(sizeof(char) * (ft_strlen(get_copied) + 1));
+    if (!new_word)
+        return (NULL);
+    while (i < ft_strlen(get_copied))
+    {
+        new_word[i] = get_copied[i];
+        i++;
+    }
+    new_word[i] = 0;
+    return (new_word);
+}
+
+int     clean_up_token_list(t_token *tokens, int len)
+{
+    int i;
+    
+    i = 0;
+    while (i < len)
+        free((void*)tokens[i++].value);
+    free(tokens);
+    return (0);
+}
+
+int    create_token_struct(t_token *tokens, char **line)
 {
     int i;
 
     i = 0;
-    // tokens[i].value = create_exit_code();
-    // tokens[i].type = EXIT_SUCCESS;
     while (line[i])
     {
-        tokens[i].value = line[i];
+        tokens[i].value = normal_copy(line[i]);
+        if (!tokens[i].value)
+            return(clean_up_token_list(tokens, i));
         tokens[i].type = tokenizer(line[i]);
         i++;
     }
     tokens[i].value = NULL;
     tokens[i].type = -1;
+    return (1);
 }

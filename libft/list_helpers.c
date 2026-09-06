@@ -6,13 +6,13 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 13:08:42 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/08/28 16:12:36 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/09/03 11:11:57 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstadd_back(t_list **lst, t_list *new_list)
+void	ft_lstadd_back(t_envs **lst, t_envs *new_list)
 {
 	t_envs	*tmp;
 
@@ -45,6 +45,7 @@ void	ft_lstclear(t_envs **lst, void (*del)(void *))
     while (tmp)
     {
         next = tmp->next;
+        del(tmp->key);
         del(tmp->value);
         free(tmp);
         tmp = next;

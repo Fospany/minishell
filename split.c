@@ -6,42 +6,29 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/21 14:02:51 by bguthy            #+#    #+#             */
-/*   Updated: 2026/08/27 11:14:41 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/09/02 16:09:51 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// char    *copy_till_next_word(const char *read_line, int *i)
-// {
-//     int     letters;
-//     int     local_index;
-//     char    *new_word;
-//     int     quote_type;
-    
-//     local_index = 0;
-//     quote_type = 0;
-//     letters = count_letters(read_line, *i);
-//     new_word = malloc(sizeof(char) * (letters + 1));
-//     if (!new_word)
-//         return (NULL);
-//     while (!is_white_space(read_line[*i]) && read_line[*i])
-//     {
-//         new_word[local_index++] = read_line[(*i)++];
-//         if (check_for_quote(read_line[*i], &quote_type))
-//             copy_till_next_quote(read_line, i, quote_type);
-//         if (is_heredoc_or_append(read_line[*i], read_line[(*i) + 1]) && local_index >= letters)
-//             break ;
-//         else if (local_index >= letters && is_redir_or_pipe(read_line[*i]) && (!is_redir_or_pipe(new_word[local_index - 1]) || is_redir_or_pipe(new_word[local_index - 1])))
-//             break ;
-//     }
-//     new_word[local_index] = 0;
-//     return (new_word);
-// }
+int     is_single_quote(const char letter)
+{
+    if (letter == SINGLE_QUOTE)
+        return (1);
+    return (0);
+}
+
+int     is_double_quote(const char letter)
+{
+    if (letter == DOUBLE_QUOTE)
+        return (1);
+    return (0);
+}
 
 int     is_quote(const char letter)
 {
-    if (letter == SINGLE_QUOTE || letter == DOUBLE_QUOTE)
+    if (is_single_quote(letter) || is_double_quote(letter))
         return (1);
     return (0);
 }

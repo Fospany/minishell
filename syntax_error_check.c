@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 16:08:24 by bguhty            #+#    #+#             */
-/*   Updated: 2026/08/27 09:48:39 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/09/03 11:03:10 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int heredoc_check(t_token *tokens, int i)
     return (0);
 }
 
-int syntax_check(t_token *tokens)
+void syntax_check(t_token *tokens)
 {
     int i;
     
@@ -62,12 +62,11 @@ int syntax_check(t_token *tokens)
     while (tokens[i].value)
     {
         if (pipe_check(tokens, i))
-            return (2);
+            break ;
         else if (heredoc_check(tokens, i))
-            return (2);
+            break ;
         else if (redir_check(tokens, i))
-            return (2);
+            break ;
         i++;
     }
-    return (0);
 }

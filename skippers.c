@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   skippers.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
+/*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 17:44:27 by bguhty            #+#    #+#             */
-/*   Updated: 2026/06/03 19:13:59 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/09/02 15:21:22 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int     skip_to_next_dollar_sign(char *expandable)
     i = 0;
     while (expandable[i])
     {
-        if (is_dollar_sign(expandable[i]) || check_for_quote_without_quote_type(expandable[i]))
+        if (is_dollar_sign(expandable[i]) || is_quote(expandable[i]))
             break ;
         i++;
     }
