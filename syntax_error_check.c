@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 16:08:24 by bguhty            #+#    #+#             */
-/*   Updated: 2026/09/03 11:03:10 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/09/06 18:56:40 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ int     syntax_error_message_display(const char *token_value)
         printf("minishell: syntax error near the token `%s'\n", token_value);
     return (1);
 }
-
 
 int pipe_check(t_token *tokens, int i)
 {

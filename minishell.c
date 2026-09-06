@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/09/06 18:24:32 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/09/06 18:59:05 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,16 +242,6 @@ t_envs     *copy_from_envp_to_own_env_list(const char **envp, int i)
     return (new_node);
 }
 
-int     get_len_of_envp(const char **envp)
-{
-    int i;
-
-    i = 0;
-    while (envp[i])
-        i++;
-    return (i);
-}
-
 void        clean_up_tokens_and_split_line(t_token *tokens, char **split_line)
 {
     int i;
@@ -286,9 +276,6 @@ t_token     *minishell(const char *read_line, t_envs *env_list, int *status)
         return (clean_up_tokens_and_split_line(tokens, split_line), NULL);
     printf("GEC2\n");
     split_clean_up(split_line, word_counter(read_line));
-    printf("GEC3\n");
-    if (!add_env_variables_to_env_list(env_list, tokens))
-        return (NULL);
     printf("GEC4\n");
     if (!handle_expansions(env_list, tokens, *status))
         return (NULL);

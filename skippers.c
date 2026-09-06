@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 17:44:27 by bguhty            #+#    #+#             */
-/*   Updated: 2026/09/02 15:21:22 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/09/06 18:52:21 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,16 +42,3 @@ void     skip_non_white_spaces(const char *read_line, int *i)
     }
 }
 
-int     skip_to_next_dollar_sign(char *expandable)
-{
-    int i;
-
-    i = 0;
-    while (expandable[i])
-    {
-        if (is_dollar_sign(expandable[i]) || is_quote(expandable[i]))
-            break ;
-        i++;
-    }
-    return (i);
-}

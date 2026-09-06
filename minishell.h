@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/01 13:20:37 by bguhty            #+#    #+#             */
-/*   Updated: 2026/09/03 11:03:23 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/09/06 19:12:50 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,16 +79,13 @@ typedef struct s_token
 void					*ft_calloc(size_t nmemb, size_t size);
 int						string_compare(const char *string1,
 							const char *string2);
-int						other_letters_check(char c);
-int						first_letter_check(char letter);
 int						is_number(char letter);
 int						is_upper_case(char letter);
 int						is_lower_case(char letter);
-void					fill_up_double_pointer(char **split_line,
+int						fill_up_double_pointer(char **split_line,
 							const char *read_line);
 char					**split_read_line(const char *read_line);
 char					**allocating_double_pointer(const char *read_line);
-int						count_letters(const char *read_line, int i);
 int						word_counter(const char *read_line);
 int    					add_envp_to_list(t_envs **my_list, const char **envp);
 int						is_word_2(const char *read_line, int *i, int *words);
@@ -101,7 +98,6 @@ void					skip_to_next_quote(const char *read_line, int *i,
 void					skip_non_white_spaces(const char *read_line, int *i);
 void					split_clean_up(char **split_line, int i);
 int						env_assign_check(char *string);
-void					remove_quoted_word(char **split_line, t_token *tokens);
 void					get_real_quote_type(const char *word, int *quote_type,
 							int *i);
 t_envs					*env_list_addition(t_token *tokens, t_envs *env_list);
@@ -120,11 +116,6 @@ int						is_pipe(const char letter);
 int     				is_single_quote(const char letter);
 int						is_double_quote(const char letter);
 void					syntax_check(t_token *tokens);
-int						skip_to_next_dollar_sign(char *expandable);
-void					copy_till_next_dollar(char *dest, char *source);
-int						copy_from_env_list(t_envs *env_list, char *expandable,
-							char *fuly_expanded, int *index);
-int						count_letters_in_expansion(char *expandable);
 int						tokenizer(char *input);
 int						create_token_struct(t_token *tokens, char **line);
 int						equal_sign_check(char *string);
@@ -148,8 +139,6 @@ int						letter_after_dollar_is_num_or_astrisk(const char letter);
 int						is_underline(char letter);
 int						is_white_space_or_special_character(const char letter);
 int						key_counter(const char *envp);
-char					*expand_env_assign(char *expandable, t_envs *env_list,
-							int *index);
 char    				*get_full_expandable_word(t_token curr_token, t_envs *env_list, int len, int exit_code);
 int     				get_full_len_of_expandable(t_token curr_token, t_envs *env_list, t_token *tokens, int exit_code);
 int     				get_len_of_current_expandable(const char *expandable, t_envs *env_list, int exit_code);
@@ -189,17 +178,11 @@ void clean_parent(t_cmds *cmds, int *fd, int *stored_input);
 void wait_pids(t_cmds *cmds, int *status);
 int run_built_in(t_cmds *cmd, char **envp);
 int echo(t_cmds *cmd);
-// void wait_single_pid(pid_t pid, int *status);
 void wait_single_pid(pid_t pid, int *status, int last_pid);
 
 int     is_question_mark(const char letter);
-// t_envs  *copy_from_envp_to_own_env_list(const char **envp, int i);
-void    add_env_assign_to_list(t_envs **my_list, t_token token);
 int     value_counter(const char *envp);
-int     number_of_env_variables(t_token *token);
 int     is_quote(const char letter);
-int     add_env_variables_to_env_list(t_envs *env_list, t_token *tokens);
-// int    copy_from_envp_to_own_env_list(const char **envp, t_envs *env_list);
 
 t_envs     *copy_from_envp_to_own_env_list(const char **envp, int i);
 

@@ -6,7 +6,7 @@
 /*   By: guthybarnakoppany <guthybarnakoppany@st    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/03 17:13:55 by bguhty            #+#    #+#             */
-/*   Updated: 2026/09/02 16:28:26 by guthybarnak      ###   ########.fr       */
+/*   Updated: 2026/09/06 19:08:01 by guthybarnak      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,7 @@
 
 int tokenizer(char *input)
 {
-    if (env_assign_check(input))
-        return token_env_assign;
-    else if (string_compare(input, "|"))
+    if (string_compare(input, "|"))
         return token_pipe;
     else if (string_compare(input, ">>"))
         return token_append;
@@ -30,16 +28,6 @@ int tokenizer(char *input)
         return token_word;
 }
 
-const char    *create_exit_code()
-{
-    const char  *exit_code;
-
-    exit_code = malloc(sizeof(char) * (10));
-    if (!exit_code)
-        return (NULL);
-    exit_code = "exit_code\0";
-    return (exit_code);
-}
 
 char    *normal_copy(const char *get_copied)
 {
