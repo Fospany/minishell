@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/19 19:02:10 by bguhty            #+#    #+#             */
-/*   Updated: 2026/09/11 13:56:12 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/09/12 12:49:40 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@
 // #include "libft/ft_strdup.c"
 // #include "libft/ft_memcpy.c"
 
-volatile sig_atomic_t g_signal = 0;
+volatile sig_atomic_t	g_signal = 0;
 
-int     determine_quote_type(char letter, int quote_type)
+int	determine_quote_type(char letter, int quote_type)
 {
     if (quote_type == SINGLE_QUOTE && letter == SINGLE_QUOTE)
         quote_type = 0;
@@ -346,25 +346,60 @@ t_token     *minishell(const char *read_line, t_envs *env_list, int *status)
     if (!remove_quotes(tokens))
         return (clean_up_token_and_env_list(tokens, &env_list), NULL);
     syntax_check(tokens, status);
+    if (*status == 2)
+    	return (free_tokens(tokens), NULL);
+    // 	clean_up_token_and_env_list(tokens, &env_list);
     return (tokens);
+}
+
+
+void free_tokens(t_token *token)
+{
+	int i;
+
+	i = -1;
+	if (!token)
+		return ;
+	while (token[++i].value)
+		free((void*)token[i].value);
+	free(token);
+}
+
+void free_cmds(t_cmds **cmd)
+{
+	t_cmds *tmp;
+	t_cmds *next_cmd;
+	if (!cmd || !*cmd)
+		return ;
+	tmp = *cmd;
+	while (tmp)
+	{
+		next_cmd = tmp->next;
+		free_split(tmp->cmd);
+		tmp->cmd = NULL;
+		if (tmp->fd_in > 0)
+			close(tmp->fd_in);
+		if (tmp->fd_out > 1)
+			close(tmp->fd_out);
+		free(tmp);
+		tmp = next_cmd;
+	}
+	*cmd = NULL;
 }
 
 int main(int ac, char **av, const char **envp)
 {
-	const char *line;
+	char *line;
 	t_shell shell;
 	t_token *tokens;
-    // (void)ac;
-    // (void)av;
-    
-    // line = malloc(7);
-    // line[0] = '"';
-    // line[1] = '"';
-    // line[2] = '$';
-    // line[3] = '?';
-    // line[4] = '"';
-    // line[5] = '"';
-    // line[6] = 0;
+    (void)av;
+
+    if(ac != 1)
+    {
+    	ft_putstr_fd("minishell doesn't take arguments\n", STDERR_FILENO);
+     	return (1);
+    }
+    // line = "$FJ";
     // const char *envp[] = {"BROWSER=/home/guthybarnakoppany/.vscode-server/cli/servers/Stable-618725e67565b290ba4da6fe2d29f8fa1d4e3622/server/bin/helpers/browser.sh",
     // "PATH=/home/guthybarnakoppany/.local/funcheck/host:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/home/guthybarnakoppany/.vscode-server/cli/servers/Stable-618725e67565b290ba4da6fe2d29f8fa1d4e3622/server/bin/remote-cli:/home/guthybarnakoppany/.local/bin:/home/guthybarnakoppany/.local/bin:/opt/orbstack-guest/bin-hiprio:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/opt/orbstack-guest/bin:/opt/orbstack-guest/data/bin/cmdlinks:/home/guthybarnakoppany/.local/bin:/home/guthybarnakoppany/.local/bin:/home/guthybarnakoppany/.local/bin:/home/guthybarnakoppany/.local/bin",
     // "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/501/bus"
@@ -375,32 +410,27 @@ int main(int ac, char **av, const char **envp)
 	init_interactive_signals();
 	while ((line = readline("minishell$ ")))
 	{
+		if (line[0] != '\0' || !line)
+			add_history(line);
 		if (WTERMSIG(g_signal) != 0)
 		{
 			shell.status = 128 + WTERMSIG(g_signal);
 			g_signal = 0;
 		}
-
-		if (!ft_strncmp(line, "exitcode", 8))
-		{
-			printf("%d\n", shell.status);
-			continue;
-		}
 		tokens = minishell(line, shell.env_list, &shell.status);
-		if (!tokens || shell.status == 2)
+		free(line);
+		if (!tokens)
 			continue;
-		shell.cmds = build_cmds(tokens, shell.env_list);
+		shell.cmds = build_cmds(tokens, shell.env_list, &shell);
+		free_tokens(tokens);
 		if (!shell.cmds)
-		{
-			shell.status = 1;
 			continue;
-		}
 		shell.status = execute_cmds(&shell);
-		if (line[0] != '\0' || !line)
-			add_history(line);
+		free_cmds(&shell.cmds);
 	}
+	// rl_clear_history();
     //tokens = minishell(line, shell.env_list, &shell.status);
     //clean_up_token_and_env_list(tokens, &shell.env_list);
-	ft_putstr_fd("exit\n", STDOUT_FILENO);
-    return (shell.status);
+	ft_putstr_fd("exit\n", STDERR_FILENO);
+    free_all_and_exit(&shell, shell.status);
 }

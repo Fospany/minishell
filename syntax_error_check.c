@@ -6,7 +6,7 @@
 /*   By: bguhty <bguhty@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/20 16:08:24 by bguhty            #+#    #+#             */
-/*   Updated: 2026/09/09 16:56:15 by bguhty           ###   ########.fr       */
+/*   Updated: 2026/09/12 12:35:17 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ void syntax_check(t_token *tokens, int *status)
     int i;
 
     i = 1;
+    *status = 0;
     if (preliminary_check(tokens))
     {
         *status = 2;
