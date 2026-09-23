@@ -6,7 +6,7 @@
 /*   By: dabdulla <dabdulla@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/26 18:53:03 by dabdulla          #+#    #+#             */
-/*   Updated: 2026/09/12 12:44:52 by dabdulla         ###   ########.fr       */
+/*   Updated: 2026/09/23 09:39:52 by dabdulla         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	*handling_path(char *cmd_name, char *path, int *exit_status)
 		*exit_status = 127;
 		return (NULL);
 	}
-	if (ft_strchr(cmd_name, '/'))
+	if (ft_strchr(cmd_name, '/') || !path)
 	{
 		status = check_access(cmd_name);
 		cmd_path = ft_strdup(cmd_name);
@@ -39,10 +39,7 @@ char	*handling_path(char *cmd_name, char *path, int *exit_status)
 		assign_exit_status(status, exit_status);
 		return (print_status(status, cmd_name), free(cmd_path), NULL);
 	}
-	cmd_path = search_in_path(&status, cmd_name, path, exit_status);
-	if (!cmd_path)
-		return (NULL);
-	return (cmd_path);
+	return (search_in_path(&status, cmd_name, path, exit_status));
 }
 
 static char	*search_in_path(int *s, char *cmd_name, char *path, int *e_status)
@@ -50,7 +47,7 @@ static char	*search_in_path(int *s, char *cmd_name, char *path, int *e_status)
 	char	**split_path;
 	char	*cmd_path;
 
-	split_path = ft_split(path, ':');
+	split_path = custom_split_path(path);
 	if (!split_path)
 		return (NULL);
 	cmd_path = find_cmd_path(cmd_name, split_path, s);
@@ -85,7 +82,6 @@ char	*find_cmd_path(char *cmd_name, char **split_path, int *status)
 	int		i;
 	int		curr_status;
 
-	curr_status = 0;
 	i = 0;
 	cmd_path = NULL;
 	while (split_path[i])

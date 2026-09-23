@@ -36,7 +36,6 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
-# include <sys/ioctl.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
 
@@ -305,8 +304,8 @@ void							set_quote_type(int *quote_type,
 									const char letter);
 char							*copy_till_next_word(const char *read_line,
 									int *i);
-int								empty_string_and_unclosed_quote_check(char *read_line,
-									int *status);
+int								empty_string_and_unclosed_quote_check(
+									char *read_line, int *status);
 void							clean_up_tokens_and_split_line(t_token *tokens,
 									char **split_line);
 int								remove_quotes(t_token *tokens);
@@ -361,5 +360,11 @@ int								add_to_final_struct(t_token *full_token, int *i,
 									char **expanded_split);
 int								cp_t_node(t_token *new_token, t_token old_token,
 									int *local_i);
+char							*create_set(void);
+char							**custom_split_path(char *s);
+char							*get_path_env(char **envp);
+char							swap_to_nonprint(char c);
+char							swap_to_normal(char c);
+void							restore_chars(t_token *tokens);
 
 #endif

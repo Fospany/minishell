@@ -23,7 +23,7 @@ SOURCE =	split.c \
 			redirections.c \
 			redirections_helpers.c \
 			heredoc.c \
-			heredoc_helpers.c\
+			heredoc_helpers.c \
 			executor.c \
 			executor_helpers.c \
 			executor_utils.c \
@@ -56,9 +56,10 @@ SOURCE =	split.c \
 			exit.c \
 			clean_ups.c \
 			change_dir.c \
-			general_helpers.c
+			general_helpers.c \
+			split_path.c
 
-
+HEADER = minishell.h
 CFLAGS = -Wall -Wextra -Werror -g
 READLINE_FLAG = -lreadline
 
@@ -66,12 +67,13 @@ CC = cc
 
 LIBFT_DIR = libft
 LIBFT = ${LIBFT_DIR}/libft.a
+LIBFT_HEADER = ${LIBFT_DIR}/libft.h
 
 OBJECTS = $(SOURCE:%.c=$(OBJDIR)/%.o)
 
 all: $(NAME)
 
-$(OBJDIR)/%.o: %.c
+$(OBJDIR)/%.o: %.c $(HEADER) $(LIBFT_HEADER)
 	@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
